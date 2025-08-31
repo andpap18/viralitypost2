@@ -1,6 +1,6 @@
 export const config = { runtime: "nodejs" };
 
-const ALLOWED_ORIGINS = null;
+const ALLOWED_ORIGINS = null;     // same-origin για MVP
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
 
 function okOrigin(req) {
@@ -83,6 +83,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error:"Select at least one output" });
     }
 
+    // optional image checks (MVP: δεν τη στέλνουμε στο OpenAI)
     let hasImage = false;
     if (imageDataUrl) {
       hasImage = true;

@@ -1,35 +1,63 @@
 const form = document.getElementById("genForm");
-const previewImg = document.getElementById("preview");
+const source = document.getElementById("sourceText");
 const imageInput = document.getElementById("imageInput");
-const submitBtn = document.getElementById("submitBtn");
+const previewImg = document.getElementById("preview");
+const outputsSel = document.getElementById("outputs");
+const toneSel = document.getElementById("tone");
+const btn = document.getElementById("submitBtn");
+const resetBtn = document.getElementById("resetBtn");
 const results = document.getElementById("results");
-
 const outIG = document.getElementById("outInstagram");
 const outTW = document.getElementById("outTwitter");
 const outLI = document.getElementById("outLinkedIn");
 
+function toast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg; t.classList.add("show");
+  setTimeout(()=> t.classList.remove("show"), 1600);
+}
+
+function canGenerate(){
+  return source.value.trim().length > 0 || (imageInput.files && imageInput.files.length > 0);
+}
+function refreshBtn(){ btn.disabled = !canGenerate(); }
+source.addEventListener("input", refreshBtn);
+
 imageInput.addEventListener("change", () => {
   const f = imageInput.files?.[0];
-  if (!f) { previewImg.style.display = "none"; return; }
+  if (!f) { previewImg.style.display = "none"; refreshBtn(); return; }
   const ok = ["image/png","image/jpeg","image/webp"].includes(f.type);
   if (!ok || f.size > 5 * 1024 * 1024) {
-    alert("Allowed: png/jpg/webp up to 5MB.");
-    imageInput.value = "";
-    previewImg.style.display = "none";
-    return;
+    toast("Allowed: png/jpg/webp up to 5MB."); imageInput.value = "";
+    previewImg.style.display = "none"; refreshBtn(); return;
   }
   const r = new FileReader();
   r.onload = () => { previewImg.src = r.result; previewImg.style.display = "block"; };
   r.readAsDataURL(f);
+  refreshBtn();
 });
+
+function copyBlock(text){
+  navigator.clipboard.writeText(text || "").then(()=> toast("Copied!"));
+}
+function renderBlock(container, title, text){
+  if(!text){ container.innerHTML=""; return; }
+  container.innerHTML = `
+    <div class="block">
+      <div class="block-head">
+        <h3>${title}</h3>
+        <button class="copy-btn" type="button">Copy</button>
+      </div>
+      <pre>${text}</pre>
+    </div>`;
+  container.querySelector(".copy-btn").onclick = ()=> copyBlock(text);
+}
 
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
-  submitBtn.disabled = true; submitBtn.textContent = "Generating…";
+  if (!canGenerate()) { toast("Write an idea or upload an image."); return; }
 
-  const sourceText = document.getElementById("sourceText").value.trim();
-  const tone = document.getElementById("tone").value;
-  const outputsSel = Array.from(document.getElementById("outputs").selectedOptions).map(o => o.value);
+  btn.classList.add("btn-loading"); btn.textContent = "Generating…"; btn.disabled = true;
 
   let imageDataUrl = null;
   if (imageInput.files?.[0]) {
@@ -40,23 +68,38 @@ form.addEventListener("submit", async (e) => {
     });
   }
 
+  const outs = Array.from(outputsSel.selectedOptions).map(o => o.value);
   try {
     const res = await fetch("/api/generate", {
       method: "POST",
       headers: { "Content-Type":"application/json" },
-      body: JSON.stringify({ sourceText, tone, outputs: outputsSel, imageDataUrl })
+      body: JSON.stringify({
+        sourceText: source.value.trim(),
+        tone: toneSel.value,
+        outputs: outs,
+        imageDataUrl
+      })
     });
-
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "Generation failed");
 
+    renderBlock(outIG, "Instagram", data.instagram);
+    renderBlock(outTW, "Twitter/X", data.twitter);
+    renderBlock(outLI, "LinkedIn", data.linkedin);
     results.classList.remove("hidden");
-    outIG.innerHTML = data.instagram ? `<h3>Instagram</h3><pre>${data.instagram}</pre>` : "";
-    outTW.innerHTML = data.twitter ? `<h3>Twitter/X</h3><pre>${data.twitter}</pre>` : "";
-    outLI.innerHTML = data.linkedin ? `<h3>LinkedIn</h3><pre>${data.linkedin}</pre>` : "";
   } catch (err) {
-    alert(err.message);
+    toast(err.message);
   } finally {
-    submitBtn.disabled = false; submitBtn.textContent = "Generate";
+    btn.classList.remove("btn-loading"); btn.textContent = "Generate"; refreshBtn();
   }
 });
+
+resetBtn.addEventListener("click", ()=>{
+  form.reset(); previewImg.src=""; previewImg.style.display="none";
+  results.classList.add("hidden");
+  outIG.innerHTML = outTW.innerHTML = outLI.innerHTML = "";
+  refreshBtn(); toast("Cleared");
+});
+
+// init
+refreshBtn();

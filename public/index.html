@@ -4,25 +4,28 @@
   <meta charset="utf-8" />
   <title>ViralityPost</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="ViralityPost: Turn an idea or image into Instagram captions, Twitter threads, and LinkedIn posts.">
+  <meta name="description" content="Turn an idea or image into Instagram captions, Twitter threads, and LinkedIn posts." />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <main class="container">
-    <h1>ViralityPost 🚀</h1>
-    <p class="subtitle">Turn an idea or image into ready-to-post captions, threads, and LinkedIn updates.</p>
+    <header class="topbar">
+      <h1>ViralityPost 🚀</h1>
+      <p class="subtitle">Turn an idea or image into ready-to-post captions, threads & LinkedIn updates.</p>
+    </header>
 
-    <form id="genForm" enctype="multipart/form-data">
+    <form id="genForm" class="card" enctype="multipart/form-data">
       <label class="field">
         <span>Idea / context</span>
         <textarea id="sourceText" placeholder="Write your idea... (e.g., 'New AI tool that turns notes into posts')"></textarea>
+        <small class="hint" id="helper">Write an idea or upload an image to enable Generate.</small>
       </label>
 
       <div class="row">
         <label class="field">
           <span>Tone</span>
           <select id="tone">
-            <option value="casual">Casual</option>
+            <option value="casual" selected>Casual</option>
             <option value="professional">Professional</option>
             <option value="witty">Witty</option>
           </select>
@@ -46,16 +49,21 @@
         <img id="preview" alt="" class="preview" />
       </label>
 
-      <button id="submitBtn" type="submit">Generate</button>
+      <div class="actions">
+        <button id="submitBtn" type="submit" class="btn">Generate</button>
+        <button id="resetBtn" type="button" class="btn ghost">Clear</button>
+      </div>
     </form>
 
-    <section id="results" class="results hidden">
+    <section id="results" class="results hidden card">
       <h2>Results</h2>
       <div id="outInstagram"></div>
       <div id="outTwitter"></div>
       <div id="outLinkedIn"></div>
     </section>
   </main>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
   <script src="script.js"></script>
 </body>
 </html>
