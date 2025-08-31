@@ -103,17 +103,3 @@ resetBtn.addEventListener("click", ()=>{
 
 // init
 refreshBtn();
-
-
-// --- UX: copy buttons inside results ---
-document.addEventListener("click", (e)=>{
-  const btn = e.target.closest(".copy-btn");
-  if(!btn) return;
-  const targetId = btn.getAttribute("data-target");
-  const block = document.getElementById(targetId);
-  const body = block?.querySelector(".result-body") || block;
-  if(!body) return;
-  const text = body.innerText || body.textContent || "";
-  if(!text.trim()) { toast("Nothing to copy"); return; }
-  navigator.clipboard.writeText(text).then(()=> toast("Copied ✓")).catch(()=> toast("Copy failed"));
-});
