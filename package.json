@@ -1,0 +1,11 @@
+{
+  "name": "viralitypost",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo \"Static build via Vercel\" && exit 0",
+    "start": "vercel dev"
+  },
+  "dependencies": {}
+}
