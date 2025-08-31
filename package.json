@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {
   "name": "viralitypost",
   "private": true,
@@ -9,3 +10,16 @@
   },
   "dependencies": {}
 }
+=======
+{
+  "name": "viralitypost",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo \"Static build via Vercel\" && exit 0",
+    "start": "vercel dev"
+  },
+  "dependencies": {}
+}
+>>>>>>> 8018758 (first commit)
