@@ -1,0 +1,123 @@
+<<<<<<< HEAD
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ViralityPost</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>ViralityPost 🚀</h1>
+    <p class="subtitle">Turn an idea or image into ready-to-post captions, threads, and LinkedIn updates.</p>
+
+    <form id="genForm" enctype="multipart/form-data">
+      <label class="field">
+        <span>Idea / context</span>
+        <textarea id="sourceText" placeholder="Write your idea... (e.g., 'New AI tool that turns notes into posts')"></textarea>
+      </label>
+
+      <div class="row">
+        <label class="field">
+          <span>Tone</span>
+          <select id="tone">
+            <option value="casual">Casual</option>
+            <option value="professional">Professional</option>
+            <option value="witty">Witty</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Outputs</span>
+          <select id="outputs" multiple size="3">
+            <option value="instagram" selected>Instagram</option>
+            <option value="twitter" selected>Twitter/X</option>
+            <option value="linkedin" selected>LinkedIn</option>
+          </select>
+          <small>(Hold Ctrl/Cmd for multi-select)</small>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Optional image</span>
+        <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" />
+        <small>Max 5MB (png/jpg/webp)</small>
+        <img id="preview" alt="" class="preview" />
+      </label>
+
+      <button id="submitBtn" type="submit">Generate</button>
+    </form>
+
+    <section id="results" class="results hidden">
+      <h2>Results</h2>
+      <div id="outInstagram"></div>
+      <div id="outTwitter"></div>
+      <div id="outLinkedIn"></div>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
+=======
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>ViralityPost</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>ViralityPost 🚀</h1>
+    <p class="subtitle">Turn an idea or image into ready-to-post captions, threads, and LinkedIn updates.</p>
+
+    <form id="genForm" enctype="multipart/form-data">
+      <label class="field">
+        <span>Idea / context</span>
+        <textarea id="sourceText" placeholder="Write your idea... (e.g., 'New AI tool that turns notes into posts')"></textarea>
+      </label>
+
+      <div class="row">
+        <label class="field">
+          <span>Tone</span>
+          <select id="tone">
+            <option value="casual">Casual</option>
+            <option value="professional">Professional</option>
+            <option value="witty">Witty</option>
+          </select>
+        </label>
+
+        <label class="field">
+          <span>Outputs</span>
+          <select id="outputs" multiple size="3">
+            <option value="instagram" selected>Instagram</option>
+            <option value="twitter" selected>Twitter/X</option>
+            <option value="linkedin" selected>LinkedIn</option>
+          </select>
+          <small>(Hold Ctrl/Cmd for multi-select)</small>
+        </label>
+      </div>
+
+      <label class="field">
+        <span>Optional image</span>
+        <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" />
+        <small>Max 5MB (png/jpg/webp)</small>
+        <img id="preview" alt="" class="preview" />
+      </label>
+
+      <button id="submitBtn" type="submit">Generate</button>
+    </form>
+
+    <section id="results" class="results hidden">
+      <h2>Results</h2>
+      <div id="outInstagram"></div>
+      <div id="outTwitter"></div>
+      <div id="outLinkedIn"></div>
+    </section>
+  </main>
+  <script src="script.js"></script>
+</body>
+</html>
+>>>>>>> 8018758 (first commit)
