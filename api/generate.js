@@ -72,23 +72,43 @@ IMPORTANT:
 }
 
 async function callOpenAI({ apiKey, prompt }) {
+  console.log("Calling OpenAI API with prompt length:", prompt.length);
+  
   const resp = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
-    headers: { "Content-Type":"application/json", "Authorization":`Bearer ${apiKey}` },
+    headers: { 
+      "Content-Type": "application/json", 
+      "Authorization": `Bearer ${apiKey}` 
+    },
     body: JSON.stringify({
       model: "gpt-4o-mini",
       temperature: 0.8,
-      messages: [{ role: "user", content: prompt }]
+      messages: [{ role: "user", content: prompt }],
+      max_tokens: 2000
     })
   });
   
+  console.log("OpenAI API response status:", resp.status);
+  
   if (!resp.ok) {
     const errorData = await resp.json().catch(() => ({}));
+    console.error("OpenAI API error:", errorData);
+    
+    if (resp.status === 401) {
+      throw new Error("Invalid OpenAI API key. Please check your API key in Vercel environment variables.");
+    } else if (resp.status === 429) {
+      throw new Error("OpenAI API rate limit exceeded. Please try again in a moment.");
+    } else if (resp.status === 500) {
+      throw new Error("OpenAI API server error. Please try again later.");
+    }
+    
     const errorMessage = errorData.error?.message || `OpenAI API error: ${resp.status}`;
     throw new Error(errorMessage);
   }
   
   const data = await resp.json();
+  console.log("OpenAI API response received");
+  
   if (!data.choices || data.choices.length === 0) {
     throw new Error("No response from OpenAI");
   }
@@ -134,9 +154,18 @@ export default async function handler(req, res) {
   if (!okOrigin(req)) return res.status(403).json({ error:"Forbidden origin" });
 
   const apiKey = process.env.OPENAI_API_KEY;
+  console.log("API Key exists:", !!apiKey);
+  console.log("API Key length:", apiKey ? apiKey.length : 0);
+  console.log("API Key starts with sk-:", apiKey ? apiKey.startsWith('sk-') : false);
+  
   if (!apiKey) {
     console.error("Missing OPENAI_API_KEY environment variable");
-    return res.status(500).json({ error:"Server configuration error" });
+    return res.status(500).json({ error: "OpenAI API key not configured. Please add OPENAI_API_KEY to environment variables." });
+  }
+  
+  if (!apiKey.startsWith('sk-')) {
+    console.error("Invalid API key format");
+    return res.status(500).json({ error: "Invalid OpenAI API key format. Key should start with 'sk-'" });
   }
 
   try {
