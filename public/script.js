@@ -195,14 +195,26 @@ form.addEventListener("submit", async (e) => {
             imageDataUrl
         };
         
-        // Make API request
-        const response = await fetch("/api/generate", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(requestData)
-        });
+        // Make API request - try main API first, then fallback
+        let response;
+        try {
+            response = await fetch("/api/generate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestData)
+            });
+        } catch (error) {
+            console.log("Main API failed, trying fallback...");
+            response = await fetch("/api/generate-fallback", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestData)
+            });
+        }
         
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({ error: "Network error" }));
