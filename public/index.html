@@ -1,69 +1,299 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>ViralityPost</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Turn an idea or image into Instagram captions, Twitter threads, and LinkedIn posts." />
-  <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ViralityPost - AI-Powered Social Media Content Generator</title>
+    <meta name="description" content="Transform your ideas and images into viral Instagram captions, Twitter threads, and LinkedIn posts with AI-powered precision.">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <main class="container">
-    <header class="topbar">
-      <h1>ViralityPost 🚀</h1>
-      <p class="subtitle">Turn an idea or image into ready-to-post captions, threads & LinkedIn updates.</p>
-    </header>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <i class="fas fa-rocket"></i>
+                <span>ViralityPost</span>
+            </div>
+            <div class="nav-links">
+                <a href="#features" class="nav-link">Features</a>
+                <a href="#how-it-works" class="nav-link">How it Works</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </div>
+        </div>
+    </nav>
 
-    <form id="genForm" class="card" enctype="multipart/form-data">
-      <label class="field">
-        <span>Idea / context</span>
-        <textarea id="sourceText" placeholder="Write your idea... (e.g., 'New AI tool that turns notes into posts')"></textarea>
-        <small class="hint" id="helper">Write an idea or upload an image to enable Generate.</small>
-      </label>
-
-      <div class="row">
-        <label class="field">
-          <span>Tone</span>
-          <select id="tone">
-            <option value="casual" selected>Casual</option>
-            <option value="professional">Professional</option>
-            <option value="witty">Witty</option>
-          </select>
-        </label>
-
-        <label class="field">
-          <span>Outputs</span>
-          <select id="outputs" multiple size="3">
-            <option value="instagram" selected>Instagram</option>
-            <option value="twitter" selected>Twitter/X</option>
-            <option value="linkedin" selected>LinkedIn</option>
-          </select>
-          <small>(Hold Ctrl/Cmd for multi-select)</small>
-        </label>
-      </div>
-
-      <label class="field">
-        <span>Optional image</span>
-        <input id="imageInput" type="file" accept="image/png,image/jpeg,image/webp" />
-        <small>Max 5MB (png/jpg/webp)</small>
-        <img id="preview" alt="" class="preview" />
-      </label>
-
-      <div class="actions">
-        <button id="submitBtn" type="submit" class="btn">Generate</button>
-        <button id="resetBtn" type="button" class="btn ghost">Clear</button>
-      </div>
-    </form>
-
-    <section id="results" class="results hidden card">
-      <h2>Results</h2>
-      <div id="outInstagram"></div>
-      <div id="outTwitter"></div>
-      <div id="outLinkedIn"></div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Transform Ideas into 
+                    <span class="gradient-text">Viral Content</span>
+                </h1>
+                <p class="hero-subtitle">
+                    AI-powered social media content generator that creates engaging Instagram captions, 
+                    Twitter threads, and LinkedIn posts from your ideas and images.
+                </p>
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">10K+</span>
+                        <span class="stat-label">Posts Generated</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">95%</span>
+                        <span class="stat-label">User Satisfaction</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">3</span>
+                        <span class="stat-label">Platforms</span>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="floating-card card-1">
+                    <i class="fab fa-instagram"></i>
+                    <span>Instagram</span>
+                </div>
+                <div class="floating-card card-2">
+                    <i class="fab fa-twitter"></i>
+                    <span>Twitter</span>
+                </div>
+                <div class="floating-card card-3">
+                    <i class="fab fa-linkedin"></i>
+                    <span>LinkedIn</span>
+                </div>
+            </div>
+        </div>
     </section>
-  </main>
 
-  <div id="toast" class="toast" aria-live="polite"></div>
-  <script src="script.js"></script>
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="container">
+            <!-- Generator Form -->
+            <section class="generator-section">
+                <div class="section-header">
+                    <h2>Create Your Content</h2>
+                    <p>Enter your idea or upload an image to generate viral social media content</p>
+                </div>
+
+                <form id="genForm" class="generator-form" enctype="multipart/form-data">
+                    <!-- Input Section -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-lightbulb"></i>
+                            Your Idea or Context
+                        </label>
+                        <textarea 
+                            id="sourceText" 
+                            class="form-textarea"
+                            placeholder="Describe your idea, product, or topic... (e.g., 'New AI tool that helps small businesses automate their social media')"
+                            rows="4"
+                        ></textarea>
+                        <div class="input-hint" id="helper">
+                            <i class="fas fa-info-circle"></i>
+                            Write a detailed idea or upload an image to enable generation
+                        </div>
+                    </div>
+
+                    <!-- Options Row -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-palette"></i>
+                                Content Tone
+                            </label>
+                            <select id="tone" class="form-select">
+                                <option value="casual">😊 Casual & Friendly</option>
+                                <option value="professional">💼 Professional & Formal</option>
+                                <option value="witty">😄 Witty & Humorous</option>
+                                <option value="inspirational">✨ Inspirational & Motivational</option>
+                                <option value="educational">📚 Educational & Informative</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="fas fa-share-alt"></i>
+                                Target Platforms
+                            </label>
+                            <div class="platform-selector">
+                                <label class="platform-option">
+                                    <input type="checkbox" value="instagram" checked>
+                                    <span class="platform-icon">
+                                        <i class="fab fa-instagram"></i>
+                                    </span>
+                                    <span class="platform-name">Instagram</span>
+                                </label>
+                                <label class="platform-option">
+                                    <input type="checkbox" value="twitter" checked>
+                                    <span class="platform-icon">
+                                        <i class="fab fa-twitter"></i>
+                                    </span>
+                                    <span class="platform-name">Twitter/X</span>
+                                </label>
+                                <label class="platform-option">
+                                    <input type="checkbox" value="linkedin" checked>
+                                    <span class="platform-icon">
+                                        <i class="fab fa-linkedin"></i>
+                                    </span>
+                                    <span class="platform-name">LinkedIn</span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Image Upload -->
+                    <div class="form-group">
+                        <label class="form-label">
+                            <i class="fas fa-image"></i>
+                            Optional Image
+                        </label>
+                        <div class="image-upload-area" id="imageUploadArea">
+                            <input type="file" id="imageInput" accept="image/png,image/jpeg,image/webp" hidden>
+                            <div class="upload-content">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>Click to upload an image or drag & drop</p>
+                                <small>PNG, JPG, WEBP up to 5MB</small>
+                            </div>
+                        </div>
+                        <div class="image-preview" id="imagePreview">
+                            <img id="previewImg" alt="Preview">
+                            <button type="button" class="remove-image" id="removeImage">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="form-actions">
+                        <button type="submit" id="submitBtn" class="btn btn-primary" disabled>
+                            <i class="fas fa-magic"></i>
+                            <span>Generate Content</span>
+                            <div class="btn-loading">
+                                <i class="fas fa-spinner fa-spin"></i>
+                            </div>
+                        </button>
+                        <button type="button" id="resetBtn" class="btn btn-secondary">
+                            <i class="fas fa-refresh"></i>
+                            Clear All
+                        </button>
+                    </div>
+                </form>
+            </section>
+
+            <!-- Results Section -->
+            <section id="results" class="results-section hidden">
+                <div class="section-header">
+                    <h2>Generated Content</h2>
+                    <p>Your AI-generated social media content is ready!</p>
+                </div>
+
+                <div class="results-grid">
+                    <div class="result-card" id="instagramCard">
+                        <div class="result-header">
+                            <div class="platform-info">
+                                <i class="fab fa-instagram"></i>
+                                <span>Instagram</span>
+                            </div>
+                            <button class="copy-btn" data-target="instagram">
+                                <i class="fas fa-copy"></i>
+                                Copy
+                            </button>
+                        </div>
+                        <div class="result-content" id="outInstagram"></div>
+                    </div>
+
+                    <div class="result-card" id="twitterCard">
+                        <div class="result-header">
+                            <div class="platform-info">
+                                <i class="fab fa-twitter"></i>
+                                <span>Twitter/X</span>
+                            </div>
+                            <button class="copy-btn" data-target="twitter">
+                                <i class="fas fa-copy"></i>
+                                Copy
+                            </button>
+                        </div>
+                        <div class="result-content" id="outTwitter"></div>
+                    </div>
+
+                    <div class="result-card" id="linkedinCard">
+                        <div class="result-header">
+                            <div class="platform-info">
+                                <i class="fab fa-linkedin"></i>
+                                <span>LinkedIn</span>
+                            </div>
+                            <button class="copy-btn" data-target="linkedin">
+                                <i class="fas fa-copy"></i>
+                                Copy
+                            </button>
+                        </div>
+                        <div class="result-content" id="outLinkedIn"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Features Section -->
+    <section id="features" class="features-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Why Choose ViralityPost?</h2>
+                <p>Powerful features that make content creation effortless</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>AI-Powered</h3>
+                    <p>Advanced AI technology that understands context and creates engaging content tailored to your brand.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-image"></i>
+                    </div>
+                    <h3>Image Analysis</h3>
+                    <p>Upload any image and get content that perfectly matches your visual content and context.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Multi-Platform</h3>
+                    <p>Generate optimized content for Instagram, Twitter, and LinkedIn with platform-specific formatting.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3>Lightning Fast</h3>
+                    <p>Get your content in seconds, not hours. Perfect for busy creators and marketers.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand">
+                    <i class="fas fa-rocket"></i>
+                    <span>ViralityPost</span>
+                </div>
+                <p>&copy; 2024 ViralityPost. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast" aria-live="polite"></div>
+
+    <script src="script.js"></script>
 </body>
 </html>

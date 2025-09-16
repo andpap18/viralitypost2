@@ -1,110 +1,336 @@
+// DOM Elements
 const form = document.getElementById("genForm");
 const source = document.getElementById("sourceText");
 const imageInput = document.getElementById("imageInput");
-const previewImg = document.getElementById("preview");
-const outputsSel = document.getElementById("outputs");
-const toneSel = document.getElementById("tone");
-const btn = document.getElementById("submitBtn");
+const imageUploadArea = document.getElementById("imageUploadArea");
+const previewImg = document.getElementById("previewImg");
+const imagePreview = document.getElementById("imagePreview");
+const removeImageBtn = document.getElementById("removeImage");
+const submitBtn = document.getElementById("submitBtn");
 const resetBtn = document.getElementById("resetBtn");
 const results = document.getElementById("results");
-const outIG = document.getElementById("outInstagram");
-const outTW = document.getElementById("outTwitter");
-const outLI = document.getElementById("outLinkedIn");
+const toast = document.getElementById("toast");
 
-function toast(msg){
-  const t = document.getElementById("toast");
-  t.textContent = msg; t.classList.add("show");
-  setTimeout(()=> t.classList.remove("show"), 1600);
+// Platform checkboxes
+const platformCheckboxes = document.querySelectorAll('.platform-option input[type="checkbox"]');
+
+// Tone selector
+const toneSelect = document.getElementById("tone");
+
+// Helper text
+const helper = document.getElementById("helper");
+
+// Toast notification function
+function showToast(message, type = 'success') {
+    toast.textContent = message;
+    toast.className = `toast show ${type}`;
+    setTimeout(() => {
+        toast.classList.remove("show");
+    }, 3000);
 }
 
-function canGenerate(){
-  return source.value.trim().length > 0 || (imageInput.files && imageInput.files.length > 0);
+// Check if form can be submitted
+function canGenerate() {
+    const hasText = source.value.trim().length > 0;
+    const hasImage = imageInput.files && imageInput.files.length > 0;
+    const hasSelectedPlatforms = Array.from(platformCheckboxes).some(cb => cb.checked);
+    
+    return (hasText || hasImage) && hasSelectedPlatforms;
 }
-function refreshBtn(){ btn.disabled = !canGenerate(); }
-source.addEventListener("input", refreshBtn);
 
-imageInput.addEventListener("change", () => {
-  const f = imageInput.files?.[0];
-  if (!f) { previewImg.style.display = "none"; refreshBtn(); return; }
-  const ok = ["image/png","image/jpeg","image/webp"].includes(f.type);
-  if (!ok || f.size > 5 * 1024 * 1024) {
-    toast("Allowed: png/jpg/webp up to 5MB."); imageInput.value = "";
-    previewImg.style.display = "none"; refreshBtn(); return;
-  }
-  const r = new FileReader();
-  r.onload = () => { previewImg.src = r.result; previewImg.style.display = "block"; };
-  r.readAsDataURL(f);
-  refreshBtn();
+// Update submit button state
+function updateSubmitButton() {
+    const canSubmit = canGenerate();
+    submitBtn.disabled = !canSubmit;
+    
+    if (canSubmit) {
+        helper.textContent = "Ready to generate content!";
+        helper.style.color = "var(--success)";
+    } else {
+        helper.textContent = "Write an idea or upload an image and select at least one platform.";
+        helper.style.color = "var(--text-muted)";
+    }
+}
+
+// Image upload handling
+imageUploadArea.addEventListener("click", () => {
+    imageInput.click();
 });
 
-function copyBlock(text){
-  navigator.clipboard.writeText(text || "").then(()=> toast("Copied!"));
-}
-function renderBlock(container, title, text){
-  if(!text){ container.innerHTML=""; return; }
-  container.innerHTML = `
-    <div class="block">
-      <div class="block-head">
-        <h3>${title}</h3>
-        <button class="copy-btn" type="button">Copy</button>
-      </div>
-      <pre>${text}</pre>
-    </div>`;
-  container.querySelector(".copy-btn").onclick = ()=> copyBlock(text);
-}
+imageUploadArea.addEventListener("dragover", (e) => {
+    e.preventDefault();
+    imageUploadArea.style.borderColor = "var(--primary)";
+    imageUploadArea.style.background = "rgba(99, 102, 241, 0.05)";
+});
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  if (!canGenerate()) { toast("Write an idea or upload an image."); return; }
+imageUploadArea.addEventListener("dragleave", (e) => {
+    e.preventDefault();
+    imageUploadArea.style.borderColor = "rgba(255, 255, 255, 0.2)";
+    imageUploadArea.style.background = "var(--bg-input)";
+});
 
-  btn.classList.add("btn-loading"); btn.textContent = "Generating…"; btn.disabled = true;
-
-  let imageDataUrl = null;
-  if (imageInput.files?.[0]) {
-    imageDataUrl = await new Promise((resolve) => {
-      const r = new FileReader();
-      r.onload = () => resolve(r.result);
-      r.readAsDataURL(imageInput.files[0]);
-    });
-  }
-
-  const outs = Array.from(outputsSel.selectedOptions).map(o => o.value);
-  try {
-    const res = await fetch("/api/generate", {
-      method: "POST",
-      headers: { "Content-Type":"application/json" },
-      body: JSON.stringify({
-        sourceText: source.value.trim(),
-        tone: toneSel.value,
-        outputs: outs,
-        imageDataUrl
-      })
-    });
+imageUploadArea.addEventListener("drop", (e) => {
+    e.preventDefault();
+    imageUploadArea.style.borderColor = "rgba(255, 255, 255, 0.2)";
+    imageUploadArea.style.background = "var(--bg-input)";
     
-    if (!res.ok) {
-      const errorData = await res.json().catch(() => ({ error: "Network error" }));
-      throw new Error(errorData.error || `Server error: ${res.status}`);
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+        imageInput.files = files;
+        handleImageUpload();
+    }
+});
+
+imageInput.addEventListener("change", handleImageUpload);
+
+function handleImageUpload() {
+    const file = imageInput.files?.[0];
+    
+    if (!file) {
+        hideImagePreview();
+        updateSubmitButton();
+        return;
     }
     
-    const data = await res.json();
+    // Validate file type
+    const validTypes = ["image/png", "image/jpeg", "image/webp"];
+    if (!validTypes.includes(file.type)) {
+        showToast("Please upload a PNG, JPG, or WEBP image.", "error");
+        imageInput.value = "";
+        hideImagePreview();
+        updateSubmitButton();
+        return;
+    }
+    
+    // Validate file size (5MB)
+    if (file.size > 5 * 1024 * 1024) {
+        showToast("Image size must be less than 5MB.", "error");
+        imageInput.value = "";
+        hideImagePreview();
+        updateSubmitButton();
+        return;
+    }
+    
+    // Show preview
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        previewImg.src = e.target.result;
+        imagePreview.classList.add("show");
+        updateSubmitButton();
+    };
+    reader.readAsDataURL(file);
+}
 
-    renderBlock(outIG, "Instagram", data.instagram);
-    renderBlock(outTW, "Twitter/X", data.twitter);
-    renderBlock(outLI, "LinkedIn", data.linkedin);
-    results.classList.remove("hidden");
-  } catch (err) {
-    toast(err.message);
-  } finally {
-    btn.classList.remove("btn-loading"); btn.textContent = "Generate"; refreshBtn();
-  }
+function hideImagePreview() {
+    imagePreview.classList.remove("show");
+    previewImg.src = "";
+}
+
+removeImageBtn.addEventListener("click", () => {
+    imageInput.value = "";
+    hideImagePreview();
+    updateSubmitButton();
 });
 
-resetBtn.addEventListener("click", ()=>{
-  form.reset(); previewImg.src=""; previewImg.style.display="none";
-  results.classList.add("hidden");
-  outIG.innerHTML = outTW.innerHTML = outLI.innerHTML = "";
-  refreshBtn(); toast("Cleared");
+// Copy to clipboard function
+async function copyToClipboard(text, platform) {
+    try {
+        await navigator.clipboard.writeText(text);
+        showToast(`${platform} content copied to clipboard!`, "success");
+    } catch (err) {
+        showToast("Failed to copy content", "error");
+    }
+}
+
+// Render content block
+function renderContentBlock(container, platform, content) {
+    if (!content || content.trim() === "") {
+        container.innerHTML = "";
+        return;
+    }
+    
+    container.innerHTML = `
+        <div class="result-content">${content}</div>
+    `;
+    
+    // Add copy functionality
+    const copyBtn = container.closest('.result-card').querySelector('.copy-btn');
+    copyBtn.onclick = () => copyToClipboard(content, platform);
+}
+
+// Form submission
+form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    
+    if (!canGenerate()) {
+        showToast("Please provide an idea or image and select at least one platform.", "error");
+        return;
+    }
+    
+    // Show loading state
+    submitBtn.classList.add("loading");
+    submitBtn.disabled = true;
+    
+    try {
+        // Prepare image data
+        let imageDataUrl = null;
+        if (imageInput.files?.[0]) {
+            imageDataUrl = await new Promise((resolve) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.readAsDataURL(imageInput.files[0]);
+            });
+        }
+        
+        // Get selected platforms
+        const selectedPlatforms = Array.from(platformCheckboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+        
+        // Prepare request data
+        const requestData = {
+            sourceText: source.value.trim(),
+            tone: toneSelect.value,
+            outputs: selectedPlatforms,
+            imageDataUrl
+        };
+        
+        // Make API request
+        const response = await fetch("/api/generate", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData)
+        });
+        
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({ error: "Network error" }));
+            throw new Error(errorData.error || `Server error: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        
+        // Render results
+        renderContentBlock(document.getElementById("outInstagram"), "Instagram", data.instagram);
+        renderContentBlock(document.getElementById("outTwitter"), "Twitter", data.twitter);
+        renderContentBlock(document.getElementById("outLinkedIn"), "LinkedIn", data.linkedin);
+        
+        // Show results section
+        results.classList.remove("hidden");
+        results.scrollIntoView({ behavior: "smooth", block: "start" });
+        
+        showToast("Content generated successfully!", "success");
+        
+    } catch (error) {
+        console.error("Generation error:", error);
+        showToast(error.message || "Failed to generate content. Please try again.", "error");
+    } finally {
+        // Hide loading state
+        submitBtn.classList.remove("loading");
+        updateSubmitButton();
+    }
 });
 
-// init
-refreshBtn();
+// Reset form
+resetBtn.addEventListener("click", () => {
+    form.reset();
+    hideImagePreview();
+    results.classList.add("hidden");
+    
+    // Clear all result containers
+    document.getElementById("outInstagram").innerHTML = "";
+    document.getElementById("outTwitter").innerHTML = "";
+    document.getElementById("outLinkedIn").innerHTML = "";
+    
+    updateSubmitButton();
+    showToast("Form cleared", "success");
+});
+
+// Event listeners for form validation
+source.addEventListener("input", updateSubmitButton);
+platformCheckboxes.forEach(checkbox => {
+    checkbox.addEventListener("change", updateSubmitButton);
+});
+
+// Initialize
+updateSubmitButton();
+
+// Smooth scrolling for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
+
+// Add some interactive effects
+document.addEventListener('DOMContentLoaded', function() {
+    // Add hover effects to feature cards
+    const featureCards = document.querySelectorAll('.feature-card');
+    featureCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-8px) scale(1.02)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = 'translateY(0) scale(1)';
+        });
+    });
+    
+    // Add click animation to buttons
+    const buttons = document.querySelectorAll('.btn');
+    buttons.forEach(button => {
+        button.addEventListener('click', function(e) {
+            // Create ripple effect
+            const ripple = document.createElement('span');
+            const rect = this.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            ripple.classList.add('ripple');
+            
+            this.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        });
+    });
+});
+
+// Add CSS for ripple effect
+const style = document.createElement('style');
+style.textContent = `
+    .btn {
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .ripple {
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.3);
+        transform: scale(0);
+        animation: ripple-animation 0.6s linear;
+        pointer-events: none;
+    }
+    
+    @keyframes ripple-animation {
+        to {
+            transform: scale(4);
+            opacity: 0;
+        }
+    }
+`;
+document.head.appendChild(style);
