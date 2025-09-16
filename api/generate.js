@@ -47,9 +47,19 @@ async function callOpenAI({ apiKey, prompt }) {
       messages: [{ role: "user", content: prompt }]
     })
   });
-  if (!resp.ok) throw new Error(`OpenAI error: ${resp.status}`);
+  
+  if (!resp.ok) {
+    const errorData = await resp.json().catch(() => ({}));
+    const errorMessage = errorData.error?.message || `OpenAI API error: ${resp.status}`;
+    throw new Error(errorMessage);
+  }
+  
   const data = await resp.json();
-  return data.choices?.[0]?.message?.content || "";
+  if (!data.choices || data.choices.length === 0) {
+    throw new Error("No response from OpenAI");
+  }
+  
+  return data.choices[0].message?.content || "";
 }
 
 function parseOutputs(raw) {
@@ -75,12 +85,26 @@ export default async function handler(req, res) {
   try {
     const { sourceText, tone, outputs, imageDataUrl } = req.body || {};
 
+    // Validation
+    if (!sourceText || typeof sourceText !== 'string' || sourceText.trim().length === 0) {
+      return res.status(400).json({ error: "Source text is required" });
+    }
+
+    if (sourceText.trim().length > 2000) {
+      return res.status(400).json({ error: "Source text too long (max 2000 characters)" });
+    }
+
+    const validTones = ['casual', 'professional', 'witty'];
+    if (!validTones.includes(tone)) {
+      return res.status(400).json({ error: "Invalid tone selected" });
+    }
+
     const outs = Array.isArray(outputs) ? outputs : [];
     const wantIG = outs.includes("instagram");
     const wantTW = outs.includes("twitter");
     const wantLI = outs.includes("linkedin");
     if (!wantIG && !wantTW && !wantLI) {
-      return res.status(400).json({ error:"Select at least one output" });
+      return res.status(400).json({ error: "Select at least one output" });
     }
 
     // optional image checks (MVP: δεν τη στέλνουμε στο OpenAI)

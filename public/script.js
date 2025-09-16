@@ -80,8 +80,13 @@ form.addEventListener("submit", async (e) => {
         imageDataUrl
       })
     });
+    
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => ({ error: "Network error" }));
+      throw new Error(errorData.error || `Server error: ${res.status}`);
+    }
+    
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "Generation failed");
 
     renderBlock(outIG, "Instagram", data.instagram);
     renderBlock(outTW, "Twitter/X", data.twitter);

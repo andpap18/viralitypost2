@@ -7,5 +7,10 @@
     "build": "echo \"Static build via Vercel\" && exit 0",
     "start": "vercel dev"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@vercel/node": "^3.0.0"
+  },
+  "devDependencies": {
+    "vercel": "^32.0.0"
+  }
 }
