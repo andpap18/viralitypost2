@@ -187,6 +187,8 @@ form.addEventListener("submit", async (e) => {
             .filter(cb => cb.checked)
             .map(cb => cb.value);
         
+        console.log("Selected platforms:", selectedPlatforms);
+        
         // Prepare request data
         const requestData = {
             sourceText: source.value.trim(),
@@ -194,6 +196,8 @@ form.addEventListener("submit", async (e) => {
             outputs: selectedPlatforms,
             imageDataUrl
         };
+        
+        console.log("Request data:", requestData);
         
         // Make API request
         console.log("Sending request to API...");
