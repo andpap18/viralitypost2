@@ -196,6 +196,7 @@ form.addEventListener("submit", async (e) => {
         };
         
         // Make API request
+        console.log("Sending request to API...");
         const response = await fetch("/api/generate", {
             method: "POST",
             headers: {
@@ -204,12 +205,16 @@ form.addEventListener("submit", async (e) => {
             body: JSON.stringify(requestData)
         });
         
+        console.log("Response status:", response.status);
+        
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ error: "Network error" }));
-            throw new Error(errorData.error || `Server error: ${response.status}`);
+            const errorText = await response.text();
+            console.error("API Error:", errorText);
+            throw new Error(`Server error: ${response.status} - ${errorText}`);
         }
         
         const data = await response.json();
+        console.log("Received data:", data);
         
         // Render results
         renderContentBlock(document.getElementById("outInstagram"), "Instagram", data.instagram);
