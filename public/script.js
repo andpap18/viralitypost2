@@ -145,7 +145,7 @@ async function copyToClipboard(text, platform) {
 // Render content block
 function renderContentBlock(container, platform, content) {
     if (!content || content.trim() === "") {
-        container.innerHTML = "";
+        container.innerHTML = '<div class="result-content"></div>';
         return;
     }
     
@@ -219,6 +219,15 @@ form.addEventListener("submit", async (e) => {
         
         const data = await response.json();
         console.log("Received data:", data);
+        
+        // Debug: Log each platform's content
+        console.log("Instagram content:", data.instagram);
+        console.log("Twitter content:", data.twitter);
+        console.log("LinkedIn content:", data.linkedin);
+        console.log("Facebook content:", data.facebook);
+        console.log("TikTok content:", data.tiktok);
+        console.log("YouTube content:", data.youtube);
+        console.log("Pinterest content:", data.pinterest);
         
         // Render results
         renderContentBlock(document.getElementById("outInstagram"), "Instagram", data.instagram);

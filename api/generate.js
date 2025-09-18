@@ -163,8 +163,11 @@ export default async function handler(req, res) {
     }
 
     const prompt = buildPrompt({ sourceText, tone, wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN, hasImage });
+    console.log("Generated prompt:", prompt);
     const raw = await callOpenAI({ apiKey, prompt, imageDataUrl });
+    console.log("Raw AI response:", raw);
     const { instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest } = parseOutputs(raw);
+    console.log("Parsed outputs:", { instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest });
 
     res.setHeader("Cache-Control", "no-store");
     return res.status(200).json({ instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest });
