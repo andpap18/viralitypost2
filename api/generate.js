@@ -22,9 +22,12 @@ INPUT IDEA:
 "${sourceText || "N/A"}"
 
 TONE: ${tone}
-IMAGE_PROVIDED: ${hasImage ? "Yes" : "No"}
+IMAGE_PROVIDED: ${hasImage ? "Yes - Analyze the provided image and create content that is directly relevant to what you see in the image" : "No - Focus purely on the text content"}
 
 IMPORTANT: Generate content ONLY for the requested platforms: ${requestedPlatforms.join(", ")}. Do NOT generate content for any other platforms.
+
+${hasImage ? `
+IMAGE ANALYSIS: Look carefully at the provided image and create social media content that is directly related to what you see. Reference specific visual elements, objects, people, scenes, or concepts visible in the image. Make the content feel authentic and connected to the visual content.` : ""}
 
 ${wantIG ? `
 For Instagram: Create 1 concise caption + 6–12 smart hashtags (no banned ones).` : ""}${wantTW ? `
@@ -44,17 +47,51 @@ CRITICAL: Do not add any other text, explanations, or content for platforms not 
   `.trim();
 }
 
-async function callOpenAI({ apiKey, prompt }) {
+async function callOpenAI({ apiKey, prompt, imageDataUrl = null }) {
+  // Prepare messages array
+  const messages = [];
+  
+  if (imageDataUrl) {
+    // If image is provided, use vision model and include image in message
+    messages.push({
+      role: "user",
+      content: [
+        {
+          type: "text",
+          text: prompt
+        },
+        {
+          type: "image_url",
+          image_url: {
+            url: imageDataUrl,
+            detail: "high"
+          }
+        }
+      ]
+    });
+  } else {
+    // If no image, use text-only message
+    messages.push({
+      role: "user",
+      content: prompt
+    });
+  }
+
   const resp = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type":"application/json", "Authorization":`Bearer ${apiKey}` },
     body: JSON.stringify({
-      model: "gpt-4o-mini",
+      model: imageDataUrl ? "gpt-4o" : "gpt-4o-mini", // Use vision model if image provided
       temperature: 0.8,
-      messages: [{ role: "user", content: prompt }]
+      messages: messages
     })
   });
-  if (!resp.ok) throw new Error(`OpenAI error: ${resp.status}`);
+  
+  if (!resp.ok) {
+    const errorData = await resp.json().catch(() => ({}));
+    throw new Error(`OpenAI error: ${resp.status} - ${errorData.error?.message || 'Unknown error'}`);
+  }
+  
   const data = await resp.json();
   return data.choices?.[0]?.message?.content || "";
 }
@@ -102,7 +139,7 @@ export default async function handler(req, res) {
     }
 
     const prompt = buildPrompt({ sourceText, tone, wantIG, wantTW, wantLI, hasImage });
-    const raw = await callOpenAI({ apiKey, prompt });
+    const raw = await callOpenAI({ apiKey, prompt, imageDataUrl });
     const { instagram, twitter, linkedin } = parseOutputs(raw);
 
     res.setHeader("Cache-Control", "no-store");
