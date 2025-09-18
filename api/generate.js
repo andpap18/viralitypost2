@@ -9,11 +9,15 @@ function okOrigin(req) {
   return ALLOWED_ORIGINS.includes(o);
 }
 
-function buildPrompt({ sourceText = "", tone = "casual", wantIG, wantTW, wantLI, hasImage }) {
+function buildPrompt({ sourceText = "", tone = "casual", wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN, hasImage }) {
   const requestedPlatforms = [];
   if (wantIG) requestedPlatforms.push("Instagram");
   if (wantTW) requestedPlatforms.push("Twitter/X");
   if (wantLI) requestedPlatforms.push("LinkedIn");
+  if (wantFB) requestedPlatforms.push("Facebook");
+  if (wantTT) requestedPlatforms.push("TikTok");
+  if (wantYT) requestedPlatforms.push("YouTube");
+  if (wantPIN) requestedPlatforms.push("Pinterest");
 
   return `
 You are an expert social media copywriter.
@@ -32,7 +36,11 @@ IMAGE ANALYSIS: Look carefully at the provided image and create social media con
 ${wantIG ? `
 For Instagram: Create 1 concise caption + 6–12 smart hashtags (no banned ones).` : ""}${wantTW ? `
 For Twitter/X: Create a short thread of 3–5 tweets (number them 1/5, 2/5, …); keep each under 260 chars.` : ""}${wantLI ? `
-For LinkedIn: Create a professional post with a strong hook, 3–5 bullet value points, and a call-to-action.` : ""}
+For LinkedIn: Create a professional post with a strong hook, 3–5 bullet value points, and a call-to-action.` : ""}${wantFB ? `
+For Facebook: Create an engaging post with emotional appeal, community focus, and a call-to-action. Include relevant hashtags.` : ""}${wantTT ? `
+For TikTok: Create a short, punchy caption (under 100 chars) with trending hashtags and emojis. Focus on viral potential.` : ""}${wantYT ? `
+For YouTube: Create an engaging video title, description (2-3 paragraphs), and tags. Focus on SEO and engagement.` : ""}${wantPIN ? `
+For Pinterest: Create a descriptive pin title, detailed description with keywords, and relevant hashtags. Focus on searchability.` : ""}
 
 STRICT FORMAT - Generate ONLY the sections below:
 ${
@@ -41,6 +49,14 @@ ${
   wantTW ? `\n[TWITTER]\n{tweet_1}\n{tweet_2}\n{tweet_3}\n` : ""
 }${
   wantLI ? `\n[LINKEDIN]\n{post_here}\n` : ""
+}${
+  wantFB ? `\n[FACEBOOK]\n{post_here}\n` : ""
+}${
+  wantTT ? `\n[TIKTOK]\n{caption_here}\n{hashtags_here}\n` : ""
+}${
+  wantYT ? `\n[YOUTUBE]\n{title_here}\n{description_here}\n{tags_here}\n` : ""
+}${
+  wantPIN ? `\n[PINTEREST]\n{title_here}\n{description_here}\n{hashtags_here}\n` : ""
 }
 
 CRITICAL: Do not add any other text, explanations, or content for platforms not requested.
@@ -105,7 +121,11 @@ function parseOutputs(raw) {
   return {
     instagram: grab("INSTAGRAM"),
     twitter: grab("TWITTER"),
-    linkedin: grab("LINKEDIN")
+    linkedin: grab("LINKEDIN"),
+    facebook: grab("FACEBOOK"),
+    tiktok: grab("TIKTOK"),
+    youtube: grab("YOUTUBE"),
+    pinterest: grab("PINTEREST")
   };
 }
 
@@ -123,7 +143,11 @@ export default async function handler(req, res) {
     const wantIG = outs.includes("instagram");
     const wantTW = outs.includes("twitter");
     const wantLI = outs.includes("linkedin");
-    if (!wantIG && !wantTW && !wantLI) {
+    const wantFB = outs.includes("facebook");
+    const wantTT = outs.includes("tiktok");
+    const wantYT = outs.includes("youtube");
+    const wantPIN = outs.includes("pinterest");
+    if (!wantIG && !wantTW && !wantLI && !wantFB && !wantTT && !wantYT && !wantPIN) {
       return res.status(400).json({ error:"Select at least one output" });
     }
 
@@ -138,12 +162,12 @@ export default async function handler(req, res) {
       if (size > MAX_IMAGE_SIZE) return res.status(400).json({ error:"Image too large (max 5MB)" });
     }
 
-    const prompt = buildPrompt({ sourceText, tone, wantIG, wantTW, wantLI, hasImage });
+    const prompt = buildPrompt({ sourceText, tone, wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN, hasImage });
     const raw = await callOpenAI({ apiKey, prompt, imageDataUrl });
-    const { instagram, twitter, linkedin } = parseOutputs(raw);
+    const { instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest } = parseOutputs(raw);
 
     res.setHeader("Cache-Control", "no-store");
-    return res.status(200).json({ instagram, twitter, linkedin });
+    return res.status(200).json({ instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest });
   } catch (err) {
     return res.status(500).json({ error: err.message || "Server error" });
   }

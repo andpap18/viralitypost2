@@ -224,6 +224,10 @@ form.addEventListener("submit", async (e) => {
         renderContentBlock(document.getElementById("outInstagram"), "Instagram", data.instagram);
         renderContentBlock(document.getElementById("outTwitter"), "Twitter", data.twitter);
         renderContentBlock(document.getElementById("outLinkedIn"), "LinkedIn", data.linkedin);
+        renderContentBlock(document.getElementById("outFacebook"), "Facebook", data.facebook);
+        renderContentBlock(document.getElementById("outTikTok"), "TikTok", data.tiktok);
+        renderContentBlock(document.getElementById("outYouTube"), "YouTube", data.youtube);
+        renderContentBlock(document.getElementById("outPinterest"), "Pinterest", data.pinterest);
         
         // Show results section
         results.classList.remove("hidden");
@@ -251,6 +255,10 @@ resetBtn.addEventListener("click", () => {
     document.getElementById("outInstagram").innerHTML = "";
     document.getElementById("outTwitter").innerHTML = "";
     document.getElementById("outLinkedIn").innerHTML = "";
+    document.getElementById("outFacebook").innerHTML = "";
+    document.getElementById("outTikTok").innerHTML = "";
+    document.getElementById("outYouTube").innerHTML = "";
+    document.getElementById("outPinterest").innerHTML = "";
     
     updateSubmitButton();
     showToast("Form cleared", "success");
