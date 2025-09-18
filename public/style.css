@@ -241,8 +241,8 @@ body {
 }
 
 .card-1 {
-    top: 10%;
-    left: 5%;
+    top: 5%;
+    left: 2%;
     animation-delay: 0s;
 }
 
@@ -251,8 +251,8 @@ body {
 }
 
 .card-2 {
-    top: 8%;
-    right: 8%;
+    top: 3%;
+    right: 2%;
     animation-delay: 1.2s;
 }
 
@@ -261,8 +261,8 @@ body {
 }
 
 .card-3 {
-    top: 45%;
-    left: 3%;
+    top: 50%;
+    left: 1%;
     animation-delay: 2.8s;
 }
 
@@ -271,8 +271,8 @@ body {
 }
 
 .card-4 {
-    top: 50%;
-    right: 5%;
+    top: 55%;
+    right: 1%;
     animation-delay: 3.5s;
 }
 
@@ -281,8 +281,8 @@ body {
 }
 
 .card-5 {
-    bottom: 15%;
-    left: 12%;
+    bottom: 8%;
+    left: 8%;
     animation-delay: 4.2s;
 }
 
@@ -291,8 +291,8 @@ body {
 }
 
 .card-6 {
-    bottom: 12%;
-    right: 15%;
+    bottom: 5%;
+    right: 8%;
     animation-delay: 5.1s;
 }
 
@@ -301,8 +301,9 @@ body {
 }
 
 .card-7 {
-    top: 35%;
-    left: 45%;
+    top: 30%;
+    left: 50%;
+    transform: translateX(-50%);
     animation-delay: 2.1s;
 }
 
@@ -324,13 +325,22 @@ body {
         transform: translateY(0px) translateX(0px); 
     }
     25% { 
-        transform: translateY(-8px) translateX(3px); 
+        transform: translateY(-15px) translateX(8px); 
     }
     50% { 
-        transform: translateY(-15px) translateX(-2px); 
+        transform: translateY(-30px) translateX(-5px); 
     }
     75% { 
-        transform: translateY(-8px) translateX(-3px); 
+        transform: translateY(-15px) translateX(-8px); 
+    }
+}
+
+@keyframes float-mobile {
+    0%, 100% { 
+        transform: translateY(0px); 
+    }
+    50% { 
+        transform: translateY(-15px); 
     }
 }
 
@@ -900,9 +910,9 @@ body {
     .floating-card {
         position: relative;
         margin: var(--space-sm);
-        animation: none;
         width: 140px;
         font-size: 0.875rem;
+        animation: float-mobile 8s ease-in-out infinite;
     }
     
     .floating-card span {
