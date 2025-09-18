@@ -270,6 +270,46 @@ body {
     color: #0077b5;
 }
 
+.card-4 {
+    top: 10%;
+    right: 10%;
+    animation-delay: 1s;
+}
+
+.card-4 i {
+    color: #1877f2;
+}
+
+.card-5 {
+    top: 70%;
+    left: 20%;
+    animation-delay: 3s;
+}
+
+.card-5 i {
+    color: #000000;
+}
+
+.card-6 {
+    bottom: 10%;
+    right: 30%;
+    animation-delay: 5s;
+}
+
+.card-6 i {
+    color: #ff0000;
+}
+
+.card-7 {
+    top: 40%;
+    left: 50%;
+    animation-delay: 1.5s;
+}
+
+.card-7 i {
+    color: #e60023;
+}
+
 /* Platform-specific colors */
 .platform-option:nth-child(1) .platform-icon i { color: #e4405f; } /* Instagram */
 .platform-option:nth-child(2) .platform-icon i { color: #1da1f2; } /* Twitter */
@@ -851,13 +891,15 @@ body {
         position: relative;
         margin: var(--space-md);
         animation: none;
+        width: 200px;
     }
     
     .hero-visual {
         height: auto;
         display: flex;
-        flex-direction: column;
-        align-items: center;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--space-md);
     }
 }
 
