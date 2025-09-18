@@ -10,6 +10,11 @@ function okOrigin(req) {
 }
 
 function buildPrompt({ sourceText = "", tone = "casual", wantIG, wantTW, wantLI, hasImage }) {
+  const requestedPlatforms = [];
+  if (wantIG) requestedPlatforms.push("Instagram");
+  if (wantTW) requestedPlatforms.push("Twitter/X");
+  if (wantLI) requestedPlatforms.push("LinkedIn");
+
   return `
 You are an expert social media copywriter.
 
@@ -19,21 +24,23 @@ INPUT IDEA:
 TONE: ${tone}
 IMAGE_PROVIDED: ${hasImage ? "Yes" : "No"}
 
-Generate up to three outputs (only those requested). 
-For Instagram: 1 concise caption + 6–12 smart hashtags (no banned ones).
-For Twitter/X: a short thread of 3–5 tweets (number them 1/5, 2/5, …); keep each under 260 chars.
-For LinkedIn: a professional post with a strong hook, 3–5 bullet value points, and a call-to-action.
+IMPORTANT: Generate content ONLY for the requested platforms: ${requestedPlatforms.join(", ")}. Do NOT generate content for any other platforms.
 
-STRICT FORMAT:
+${wantIG ? `
+For Instagram: Create 1 concise caption + 6–12 smart hashtags (no banned ones).` : ""}${wantTW ? `
+For Twitter/X: Create a short thread of 3–5 tweets (number them 1/5, 2/5, …); keep each under 260 chars.` : ""}${wantLI ? `
+For LinkedIn: Create a professional post with a strong hook, 3–5 bullet value points, and a call-to-action.` : ""}
+
+STRICT FORMAT - Generate ONLY the sections below:
 ${
   wantIG ? `\n[INSTAGRAM]\n{caption_here}\n{hashtags_here}\n` : ""
 }${
-  wantTW ? `\n[TWITTER]\n{tweet1}\n{tweet2}\n{tweet3}\n` : ""
+  wantTW ? `\n[TWITTER]\n{tweet_1}\n{tweet_2}\n{tweet_3}\n` : ""
 }${
   wantLI ? `\n[LINKEDIN]\n{post_here}\n` : ""
 }
 
-Do not add any other text or explanations.
+CRITICAL: Do not add any other text, explanations, or content for platforms not requested.
   `.trim();
 }
 
