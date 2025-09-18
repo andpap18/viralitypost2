@@ -241,8 +241,8 @@ body {
 }
 
 .card-1 {
-    top: 15%;
-    left: 15%;
+    top: 10%;
+    left: 5%;
     animation-delay: 0s;
 }
 
@@ -251,9 +251,9 @@ body {
 }
 
 .card-2 {
-    top: 15%;
-    right: 15%;
-    animation-delay: 1s;
+    top: 8%;
+    right: 8%;
+    animation-delay: 1.2s;
 }
 
 .card-2 i {
@@ -261,9 +261,9 @@ body {
 }
 
 .card-3 {
-    top: 40%;
-    left: 10%;
-    animation-delay: 2s;
+    top: 45%;
+    left: 3%;
+    animation-delay: 2.8s;
 }
 
 .card-3 i {
@@ -271,9 +271,9 @@ body {
 }
 
 .card-4 {
-    top: 40%;
-    right: 10%;
-    animation-delay: 3s;
+    top: 50%;
+    right: 5%;
+    animation-delay: 3.5s;
 }
 
 .card-4 i {
@@ -281,9 +281,9 @@ body {
 }
 
 .card-5 {
-    bottom: 25%;
-    left: 20%;
-    animation-delay: 4s;
+    bottom: 15%;
+    left: 12%;
+    animation-delay: 4.2s;
 }
 
 .card-5 i {
@@ -291,9 +291,9 @@ body {
 }
 
 .card-6 {
-    bottom: 25%;
-    right: 20%;
-    animation-delay: 5s;
+    bottom: 12%;
+    right: 15%;
+    animation-delay: 5.1s;
 }
 
 .card-6 i {
@@ -301,10 +301,9 @@ body {
 }
 
 .card-7 {
-    top: 28%;
-    left: 50%;
-    transform: translateX(-50%);
-    animation-delay: 2.5s;
+    top: 35%;
+    left: 45%;
+    animation-delay: 2.1s;
 }
 
 .card-7 i {
@@ -321,8 +320,18 @@ body {
 .platform-option:nth-child(7) .platform-icon i { color: #e60023; } /* Pinterest */
 
 @keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
+    0%, 100% { 
+        transform: translateY(0px) translateX(0px); 
+    }
+    25% { 
+        transform: translateY(-8px) translateX(3px); 
+    }
+    50% { 
+        transform: translateY(-15px) translateX(-2px); 
+    }
+    75% { 
+        transform: translateY(-8px) translateX(-3px); 
+    }
 }
 
 /* Main Content */
