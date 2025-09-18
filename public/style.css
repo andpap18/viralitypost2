@@ -241,8 +241,8 @@ body {
 }
 
 .card-1 {
-    top: 20%;
-    left: 10%;
+    top: 15%;
+    left: 15%;
     animation-delay: 0s;
 }
 
@@ -251,9 +251,9 @@ body {
 }
 
 .card-2 {
-    top: 50%;
-    right: 20%;
-    animation-delay: 2s;
+    top: 15%;
+    right: 15%;
+    animation-delay: 1s;
 }
 
 .card-2 i {
@@ -261,9 +261,9 @@ body {
 }
 
 .card-3 {
-    bottom: 20%;
-    left: 30%;
-    animation-delay: 4s;
+    top: 40%;
+    left: 10%;
+    animation-delay: 2s;
 }
 
 .card-3 i {
@@ -271,9 +271,9 @@ body {
 }
 
 .card-4 {
-    top: 10%;
+    top: 40%;
     right: 10%;
-    animation-delay: 1s;
+    animation-delay: 3s;
 }
 
 .card-4 i {
@@ -281,9 +281,9 @@ body {
 }
 
 .card-5 {
-    top: 70%;
+    bottom: 25%;
     left: 20%;
-    animation-delay: 3s;
+    animation-delay: 4s;
 }
 
 .card-5 i {
@@ -291,8 +291,8 @@ body {
 }
 
 .card-6 {
-    bottom: 10%;
-    right: 30%;
+    bottom: 25%;
+    right: 20%;
     animation-delay: 5s;
 }
 
@@ -301,9 +301,10 @@ body {
 }
 
 .card-7 {
-    top: 40%;
+    top: 28%;
     left: 50%;
-    animation-delay: 1.5s;
+    transform: translateX(-50%);
+    animation-delay: 2.5s;
 }
 
 .card-7 i {
@@ -889,17 +890,22 @@ body {
     
     .floating-card {
         position: relative;
-        margin: var(--space-md);
+        margin: var(--space-sm);
         animation: none;
-        width: 200px;
+        width: 140px;
+        font-size: 0.875rem;
+    }
+    
+    .floating-card span {
+        font-size: 0.75rem;
     }
     
     .hero-visual {
         height: auto;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
         gap: var(--space-md);
+        padding: var(--space-lg);
     }
 }
 
