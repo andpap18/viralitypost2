@@ -355,6 +355,111 @@ body {
     }
 }
 
+@keyframes float-mobile-1 {
+    0%, 100% { 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(8px, -10px); 
+    }
+    50% { 
+        transform: translate(-5px, -15px); 
+    }
+    75% { 
+        transform: translate(-8px, -5px); 
+    }
+}
+
+@keyframes float-mobile-2 {
+    0%, 100% { 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(-10px, 8px); 
+    }
+    50% { 
+        transform: translate(-15px, -5px); 
+    }
+    75% { 
+        transform: translate(-8px, 10px); 
+    }
+}
+
+@keyframes float-mobile-3 {
+    0%, 100% { 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(12px, 5px); 
+    }
+    50% { 
+        transform: translate(8px, -12px); 
+    }
+    75% { 
+        transform: translate(-6px, -8px); 
+    }
+}
+
+@keyframes float-mobile-4 {
+    0%, 100% { 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(-6px, -12px); 
+    }
+    50% { 
+        transform: translate(10px, -8px); 
+    }
+    75% { 
+        transform: translate(8px, 6px); 
+    }
+}
+
+@keyframes float-mobile-5 {
+    0%, 100% { 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(5px, 10px); 
+    }
+    50% { 
+        transform: translate(-12px, 8px); 
+    }
+    75% { 
+        transform: translate(-8px, -10px); 
+    }
+}
+
+@keyframes float-mobile-6 {
+    0%, 100% { 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(-8px, -8px); 
+    }
+    50% { 
+        transform: translate(6px, -10px); 
+    }
+    75% { 
+        transform: translate(12px, 5px); 
+    }
+}
+
+@keyframes float-mobile-7 {
+    0%, 100% { 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(-10px, 6px); 
+    }
+    50% { 
+        transform: translate(8px, 12px); 
+    }
+    75% { 
+        transform: translate(-5px, -6px); 
+    }
+}
+
 /* Main Content */
 .main-content {
     padding: var(--space-3xl) 0;
@@ -931,7 +1036,6 @@ body {
         width: 120px;
         min-width: 120px;
         font-size: 0.875rem;
-        animation: float-mobile 8s ease-in-out infinite;
         padding: var(--space-md);
     }
     
@@ -951,14 +1055,43 @@ body {
         padding: var(--space-xl);
     }
     
-    /* Mobile-specific card positioning */
-    .card-1 { top: 5%; left: 3%; }
-    .card-2 { top: 5%; right: 3%; }
-    .card-3 { top: 35%; left: 2%; }
-    .card-4 { top: 35%; right: 2%; }
-    .card-5 { bottom: 8%; left: 5%; }
-    .card-6 { bottom: 8%; right: 5%; }
-    .card-7 { top: 20%; left: 50%; transform: translateX(-50%); }
+    /* Mobile-specific card positioning with unique animations */
+    .card-1 { 
+        top: 5%; 
+        left: 3%; 
+        animation: float-mobile-1 7s ease-in-out infinite;
+    }
+    .card-2 { 
+        top: 5%; 
+        right: 3%; 
+        animation: float-mobile-2 8s ease-in-out infinite;
+    }
+    .card-3 { 
+        top: 35%; 
+        left: 2%; 
+        animation: float-mobile-3 6s ease-in-out infinite;
+    }
+    .card-4 { 
+        top: 35%; 
+        right: 2%; 
+        animation: float-mobile-4 9s ease-in-out infinite;
+    }
+    .card-5 { 
+        bottom: 8%; 
+        left: 5%; 
+        animation: float-mobile-5 7.5s ease-in-out infinite;
+    }
+    .card-6 { 
+        bottom: 8%; 
+        right: 5%; 
+        animation: float-mobile-6 6.5s ease-in-out infinite;
+    }
+    .card-7 { 
+        top: 20%; 
+        left: 50%; 
+        transform: translateX(-50%);
+        animation: float-mobile-7 8.5s ease-in-out infinite;
+    }
 }
 
 @media (max-width: 480px) {
