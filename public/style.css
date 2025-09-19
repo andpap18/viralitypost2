@@ -302,8 +302,7 @@ body {
 
 .card-7 {
     top: 30%;
-    left: 50%;
-    transform: translateX(-50%);
+    left: calc(50% - 100px);
     animation-delay: 2.1s;
 }
 
