@@ -168,17 +168,20 @@ body {
     font-weight: 700;
     line-height: 1.1;
     margin-bottom: var(--space-lg);
-    background: linear-gradient(135deg, var(--text-primary) 0%, var(--text-secondary) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--text-primary);
 }
 
 .gradient-text {
+    color: var(--primary);
     background: var(--gradient-primary);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    /* Fallback for browsers that don't support background-clip */
+    @supports not (-webkit-background-clip: text) {
+        color: var(--primary);
+        -webkit-text-fill-color: initial;
+    }
 }
 
 .hero-subtitle {
@@ -914,8 +917,8 @@ body {
     }
     
     .floating-card {
-        position: relative;
-        margin: var(--space-sm);
+        position: absolute;
+        margin: 0;
         width: 120px;
         font-size: 0.875rem;
         animation: float-mobile 8s ease-in-out infinite;
@@ -926,15 +929,20 @@ body {
     }
     
     .hero-visual {
-        height: auto;
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        gap: var(--space-lg);
+        position: relative;
+        height: 400px;
+        display: block;
         padding: var(--space-xl);
-        min-height: 400px;
     }
+    
+    /* Mobile-specific card positioning */
+    .card-1 { top: 10%; left: 5%; }
+    .card-2 { top: 10%; right: 5%; }
+    .card-3 { top: 50%; left: 10%; }
+    .card-4 { top: 50%; right: 10%; }
+    .card-5 { bottom: 20%; left: 15%; }
+    .card-6 { bottom: 20%; right: 15%; }
+    .card-7 { top: 30%; left: 50%; transform: translateX(-50%); }
 }
 
 @media (max-width: 480px) {
