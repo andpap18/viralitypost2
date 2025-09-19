@@ -891,6 +891,13 @@ body {
     
     .hero-title {
         font-size: 2rem;
+        line-height: 1.2;
+        margin-bottom: var(--space-md);
+    }
+    
+    .hero-subtitle {
+        font-size: 1rem;
+        margin-bottom: var(--space-lg);
     }
     
     .hero-stats {
@@ -909,7 +916,7 @@ body {
     .floating-card {
         position: relative;
         margin: var(--space-sm);
-        width: 140px;
+        width: 120px;
         font-size: 0.875rem;
         animation: float-mobile 8s ease-in-out infinite;
     }
@@ -920,10 +927,13 @@ body {
     
     .hero-visual {
         height: auto;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-md);
-        padding: var(--space-lg);
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: center;
+        gap: var(--space-lg);
+        padding: var(--space-xl);
+        min-height: 400px;
     }
 }
 
@@ -938,6 +948,21 @@ body {
     
     .hero-title {
         font-size: 1.75rem;
+        line-height: 1.1;
+        margin-bottom: var(--space-sm);
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: var(--space-md);
+    }
+    
+    .hero-stats {
+        gap: var(--space-md);
+    }
+    
+    .hero-container {
+        padding: var(--space-md) 0;
     }
     
     .section-header h2 {
