@@ -227,20 +227,29 @@ body {
     border-radius: var(--radius-xl);
     padding: var(--space-lg);
     display: flex;
+    flex-direction: column;
     align-items: center;
-    gap: var(--space-md);
+    justify-content: center;
+    gap: var(--space-sm);
     backdrop-filter: blur(20px);
     box-shadow: var(--shadow-xl);
     animation: float 6s ease-in-out infinite;
+    text-align: center;
+    min-width: 140px;
 }
 
 .floating-card i {
-    font-size: 2rem;
+    font-size: 2.5rem;
+    display: block;
+    margin-bottom: var(--space-xs);
 }
 
 .floating-card span {
     font-weight: 600;
     color: var(--text-primary);
+    font-size: 0.875rem;
+    text-align: center;
+    line-height: 1.2;
 }
 
 .card-1 {
@@ -920,12 +929,19 @@ body {
         position: absolute;
         margin: 0;
         width: 120px;
+        min-width: 120px;
         font-size: 0.875rem;
         animation: float-mobile 8s ease-in-out infinite;
+        padding: var(--space-md);
+    }
+    
+    .floating-card i {
+        font-size: 2rem;
     }
     
     .floating-card span {
         font-size: 0.75rem;
+        text-align: center;
     }
     
     .hero-visual {
