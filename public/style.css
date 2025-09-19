@@ -253,8 +253,8 @@ body {
 }
 
 .card-1 {
-    top: 8%;
-    left: 8%;
+    top: 5%;
+    left: 3%;
     animation-delay: 0s;
 }
 
@@ -263,8 +263,8 @@ body {
 }
 
 .card-2 {
-    top: 8%;
-    right: 8%;
+    top: 5%;
+    right: 3%;
     animation-delay: 1.2s;
 }
 
@@ -273,8 +273,8 @@ body {
 }
 
 .card-3 {
-    top: 45%;
-    left: 5%;
+    top: 35%;
+    left: 2%;
     animation-delay: 2.8s;
 }
 
@@ -283,8 +283,8 @@ body {
 }
 
 .card-4 {
-    top: 45%;
-    right: 5%;
+    top: 35%;
+    right: 2%;
     animation-delay: 3.5s;
 }
 
@@ -293,8 +293,8 @@ body {
 }
 
 .card-5 {
-    bottom: 20%;
-    left: 15%;
+    bottom: 8%;
+    left: 5%;
     animation-delay: 4.2s;
 }
 
@@ -303,8 +303,8 @@ body {
 }
 
 .card-6 {
-    bottom: 20%;
-    right: 15%;
+    bottom: 8%;
+    right: 5%;
     animation-delay: 5.1s;
 }
 
@@ -313,7 +313,7 @@ body {
 }
 
 .card-7 {
-    top: 30%;
+    top: 20%;
     left: calc(50% - 100px);
     animation-delay: 2.1s;
 }
@@ -952,13 +952,13 @@ body {
     }
     
     /* Mobile-specific card positioning */
-    .card-1 { top: 8%; left: 8%; }
-    .card-2 { top: 8%; right: 8%; }
-    .card-3 { top: 45%; left: 5%; }
-    .card-4 { top: 45%; right: 5%; }
-    .card-5 { bottom: 20%; left: 15%; }
-    .card-6 { bottom: 20%; right: 15%; }
-    .card-7 { top: 30%; left: 50%; transform: translateX(-50%); }
+    .card-1 { top: 5%; left: 3%; }
+    .card-2 { top: 5%; right: 3%; }
+    .card-3 { top: 35%; left: 2%; }
+    .card-4 { top: 35%; right: 2%; }
+    .card-5 { bottom: 8%; left: 5%; }
+    .card-6 { bottom: 8%; right: 5%; }
+    .card-7 { top: 20%; left: 50%; transform: translateX(-50%); }
 }
 
 @media (max-width: 480px) {
