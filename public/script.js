@@ -271,6 +271,8 @@ form.addEventListener("submit", async (e) => {
         console.log("Received data:", data);
         
         // Debug: Log each platform's content
+        console.log("Full API Response:", data);
+        console.log("Selected platforms:", selectedPlatforms);
         console.log("Instagram content:", data.instagram);
         console.log("Twitter content:", data.twitter);
         console.log("LinkedIn content:", data.linkedin);

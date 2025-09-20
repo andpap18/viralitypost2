@@ -113,10 +113,13 @@ async function callOpenAI({ apiKey, prompt, imageDataUrl = null }) {
 }
 
 function parseOutputs(raw) {
+  console.log("Parsing raw output:", raw);
   const grab = (tag) => {
     const re = new RegExp(`\\[${tag}\\]\\s*([\\s\\S]*?)(?=\\n\\[[A-Z]+\\]|$)`, "i");
     const m = raw.match(re);
-    return m ? m[1].trim() : "";
+    const result = m ? m[1].trim() : "";
+    console.log(`Parsed ${tag}:`, result);
+    return result;
   };
   return {
     instagram: grab("INSTAGRAM"),
@@ -164,6 +167,7 @@ export default async function handler(req, res) {
 
     const prompt = buildPrompt({ sourceText, tone, wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN, hasImage });
     console.log("Generated prompt:", prompt);
+    console.log("Platform flags:", { wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN });
     const raw = await callOpenAI({ apiKey, prompt, imageDataUrl });
     console.log("Raw AI response:", raw);
     const { instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest } = parseOutputs(raw);
