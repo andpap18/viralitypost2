@@ -237,14 +237,16 @@ export default async function handler(req, res) {
       tone = body.tone || "casual";
       outputs = Array.isArray(body.outputs) ? body.outputs : [];
       
-      // Handle image data - support both data URI and multipart
-      const imageDataUrl = body.imageDataUrl || null;
+      // Handle image data - support multiple field names for compatibility
+      const imageDataUri = body.imageDataUri || body.imageDataUrl || body.imageBase64 || null;
       let imageMimeType = null;
       let imageBase64Data = null;
       
-      if (imageDataUrl) {
+      if (imageDataUri) {
         console.log("Processing image data URI...");
-        const { mimeType, base64Data } = parseDataUri(imageDataUrl);
+        console.log("Field name used:", body.imageDataUri ? "imageDataUri" : body.imageDataUrl ? "imageDataUrl" : "imageBase64");
+        
+        const { mimeType, base64Data } = parseDataUri(imageDataUri);
         imageMimeType = mimeType;
         imageBase64Data = base64Data;
         
@@ -254,7 +256,7 @@ export default async function handler(req, res) {
         imageData = {
           mimeType: imageMimeType,
           base64Data: imageBase64Data,
-          dataUri: imageDataUrl
+          dataUri: imageDataUri
         };
       }
       
@@ -268,8 +270,22 @@ export default async function handler(req, res) {
       });
     } catch (parseError) {
       console.error("Request parsing error:", parseError);
+      
+      // Provide specific error messages based on the error type
+      let errorMessage = "Invalid request format. Please check your data and try again.";
+      
+      if (parseError.message.includes('Invalid image format')) {
+        errorMessage = parseError.message;
+      } else if (parseError.message.includes('too large')) {
+        errorMessage = parseError.message;
+      } else if (parseError.message.includes('Unsupported image type')) {
+        errorMessage = parseError.message;
+      } else if (parseError.message) {
+        errorMessage = parseError.message;
+      }
+      
       return res.status(400).json({ 
-        error: parseError.message || "Invalid request format. Please check your data and try again." 
+        error: errorMessage
       });
     }
 
@@ -289,8 +305,21 @@ export default async function handler(req, res) {
       return res.status(400).json({ error:"Select at least one output" });
     }
 
-    // Determine if we have image data
-    const hasImage = !!imageData;
+    // Determine if we have image data with proper guard clauses
+    const hasImage = !!(imageData && imageData.dataUri && imageData.mimeType && imageData.base64Data);
+    
+    // Validate that we have either text or image
+    if (!sourceText.trim() && !hasImage) {
+      console.error("No content provided - neither text nor image");
+      return res.status(400).json({ 
+        error: "Please provide either text content or upload an image." 
+      });
+    }
+    
+    // Additional validation for image-only requests
+    if (!sourceText.trim() && hasImage) {
+      console.log("Image-only request detected - using default text context");
+    }
 
     const prompt = buildPrompt({ sourceText, tone, wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN, hasImage });
     console.log("Generated prompt:", prompt);
@@ -298,7 +327,7 @@ export default async function handler(req, res) {
     console.log("Source text:", sourceText);
     console.log("Tone:", tone);
     console.log("Has image:", hasImage);
-    console.log("Image data URL length:", imageDataUrl?.length || 0);
+    console.log("Image data URI length:", imageData?.dataUri?.length || 0);
     
     console.log("=== CALLING OPENAI VISION MODEL ===");
     console.log("Request ID:", Date.now()); // Temporary diagnostic ID

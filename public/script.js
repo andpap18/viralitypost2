@@ -294,15 +294,15 @@ form.addEventListener("submit", async (e) => {
             sourceText: source.value.trim(),
             tone: toneSelect.value,
             outputs: selectedPlatforms,
-            imageDataUrl
+            imageDataUri: imageDataUrl  // Use canonical field name
         };
         
         console.log("Request data structure:", {
             sourceText: requestData.sourceText,
             tone: requestData.tone,
             outputs: requestData.outputs,
-            hasImageDataUrl: !!requestData.imageDataUrl,
-            imageDataUrlLength: requestData.imageDataUrl?.length || 0
+            hasImageDataUri: !!requestData.imageDataUri,
+            imageDataUriLength: requestData.imageDataUri?.length || 0
         });
         
         // Make API request
