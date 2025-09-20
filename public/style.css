@@ -218,9 +218,6 @@ body {
 .hero-cta {
     margin-top: var(--space-2xl);
     text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
 }
 
 .btn-large {
@@ -1342,9 +1339,6 @@ body {
         font-size: 2rem;
         line-height: 1.2;
         margin-bottom: var(--space-md);
-        display: block;
-        visibility: visible;
-        opacity: 1;
     }
     
     .hero-subtitle {
@@ -1478,15 +1472,6 @@ body {
     
     .hero-container {
         padding: var(--space-md) 0;
-    }
-    
-    .hero-content {
-        order: 2;
-        margin-top: var(--space-lg);
-    }
-    
-    .hero-visual {
-        order: 1;
     }
     
     .section-header h2 {
