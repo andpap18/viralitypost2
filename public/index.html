@@ -19,6 +19,7 @@
             </div>
             <div class="nav-links">
                 <a href="#features" class="nav-link">Features</a>
+                <a href="#pricing" class="nav-link">Pricing</a>
                 <a href="#how-it-works" class="nav-link">How it Works</a>
                 <a href="#contact" class="nav-link">Contact</a>
             </div>
@@ -546,6 +547,217 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
                     <div class="logo-item">DigitalAgency</div>
                     <div class="logo-item">MarketingPro</div>
                     <div class="logo-item">ContentStudio</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>Simple, Transparent Pricing</h2>
+                <p>Choose the plan that fits your content creation needs</p>
+            </div>
+
+            <div class="pricing-toggle">
+                <span class="toggle-label">Monthly</span>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="pricingToggle">
+                    <span class="toggle-slider"></span>
+                </label>
+                <span class="toggle-label">
+                    Yearly 
+                    <span class="discount-badge">-10%</span>
+                </span>
+            </div>
+
+            <div class="pricing-grid">
+                <!-- Free Plan -->
+                <div class="pricing-card free-plan">
+                    <div class="plan-header">
+                        <h3>Free</h3>
+                        <div class="plan-price">
+                            <span class="currency">€</span>
+                            <span class="amount">0</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">Perfect for trying out our AI content generator</p>
+                    </div>
+                    <div class="plan-features">
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>10 credits per month</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>All 7 social platforms</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Basic AI content generation</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Image upload support</span>
+                        </div>
+                        <div class="feature disabled">
+                            <i class="fas fa-times"></i>
+                            <span>Priority support</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-outline pricing-btn" onclick="selectPlan('free')">
+                        Start Free
+                    </button>
+                </div>
+
+                <!-- Starter Plan -->
+                <div class="pricing-card starter-plan featured">
+                    <div class="plan-badge">Most Popular</div>
+                    <div class="plan-header">
+                        <h3>Starter</h3>
+                        <div class="plan-price">
+                            <span class="currency">€</span>
+                            <span class="amount monthly">9</span>
+                            <span class="amount yearly" style="display: none;">8</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">Ideal for individual creators and small businesses</p>
+                    </div>
+                    <div class="plan-features">
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>100 credits per month</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>All 7 social platforms</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Advanced AI content generation</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Image upload & analysis</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Email support</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary pricing-btn" onclick="selectPlan('starter')">
+                        Get Started
+                    </button>
+                </div>
+
+                <!-- Pro Plan -->
+                <div class="pricing-card pro-plan">
+                    <div class="plan-header">
+                        <h3>Pro</h3>
+                        <div class="plan-price">
+                            <span class="currency">€</span>
+                            <span class="amount monthly">29</span>
+                            <span class="amount yearly" style="display: none;">26</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">Perfect for agencies and growing businesses</p>
+                    </div>
+                    <div class="plan-features">
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>500 credits per month</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>All 7 social platforms</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Premium AI content generation</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Advanced image analysis</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Priority support</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary pricing-btn" onclick="selectPlan('pro')">
+                        Go Pro
+                    </button>
+                </div>
+
+                <!-- Business Plan -->
+                <div class="pricing-card business-plan">
+                    <div class="plan-header">
+                        <h3>Business</h3>
+                        <div class="plan-price">
+                            <span class="currency">€</span>
+                            <span class="amount monthly">59</span>
+                            <span class="amount yearly" style="display: none;">53</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="plan-description">Unlimited content for large teams and enterprises</p>
+                    </div>
+                    <div class="plan-features">
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Unlimited credits</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>All 7 social platforms</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Enterprise AI content generation</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Advanced image analysis</span>
+                        </div>
+                        <div class="feature">
+                            <i class="fas fa-check"></i>
+                            <span>Dedicated support</span>
+                        </div>
+                    </div>
+                    <button class="btn btn-primary pricing-btn" onclick="selectPlan('business')">
+                        Go Business
+                    </button>
+                </div>
+            </div>
+
+            <!-- Top-ups Section -->
+            <div class="topups-section">
+                <div class="section-header">
+                    <h3>Need Extra Credits?</h3>
+                    <p>Buy additional credits anytime to keep creating content</p>
+                </div>
+                <div class="topups-grid">
+                    <div class="topup-card">
+                        <div class="topup-header">
+                            <h4>100 Credits</h4>
+                            <div class="topup-price">€10</div>
+                        </div>
+                        <p>Perfect for occasional extra content</p>
+                        <button class="btn btn-outline topup-btn" onclick="buyTopup('100')">
+                            Buy Now
+                        </button>
+                    </div>
+                    <div class="topup-card featured">
+                        <div class="topup-badge">Best Value</div>
+                        <div class="topup-header">
+                            <h4>500 Credits</h4>
+                            <div class="topup-price">€39</div>
+                        </div>
+                        <p>Great for busy periods</p>
+                        <button class="btn btn-primary topup-btn" onclick="buyTopup('500')">
+                            Buy Now
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
