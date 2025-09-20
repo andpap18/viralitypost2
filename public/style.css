@@ -555,6 +555,19 @@ body {
     gap: var(--space-xl);
 }
 
+.form-container {
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0;
+}
+
+@media (min-width: 1280px) {
+    .form-container {
+        max-width: 1200px;
+    }
+}
+
 .form-group {
     display: flex;
     flex-direction: column;
@@ -602,6 +615,14 @@ body {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-xl);
+    align-items: start;
+}
+
+@media (max-width: 768px) {
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: var(--space-lg);
+    }
 }
 
 .form-select {
@@ -632,19 +653,42 @@ body {
 /* Responsive Platform Grid */
 .platform-grid-responsive {
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;
     gap: var(--space-md);
+    width: 100%;
 }
 
 @media (min-width: 640px) {
     .platform-grid-responsive {
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
 @media (min-width: 768px) {
     .platform-grid-responsive {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .platform-grid-responsive {
         grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 639px) {
+    .platform-option {
+        min-height: 50px;
+        padding: var(--space-sm);
+        gap: var(--space-sm);
+    }
+    
+    .platform-option .platform-icon i {
+        font-size: 1.2rem;
+    }
+    
+    .platform-option .platform-name {
+        font-size: 0.875rem;
     }
 }
 
@@ -658,6 +702,9 @@ body {
     border-radius: var(--radius-lg);
     cursor: pointer;
     transition: var(--transition-fast);
+    width: 100%;
+    min-height: 60px;
+    box-sizing: border-box;
 }
 
 .platform-option:hover {
@@ -699,11 +746,25 @@ body {
     cursor: pointer;
     transition: var(--transition-fast);
     background: var(--bg-input);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .image-upload-area:hover {
     border-color: var(--primary);
     background: rgba(99, 102, 241, 0.05);
+}
+
+@media (max-width: 768px) {
+    .image-upload-area {
+        padding: var(--space-xl);
+    }
+}
+
+@media (max-width: 480px) {
+    .image-upload-area {
+        padding: var(--space-lg);
+    }
 }
 
 .upload-content i {
@@ -1356,9 +1417,7 @@ body {
         font-size: 2.5rem;
     }
     
-    .form-row {
-        grid-template-columns: 1fr;
-    }
+    /* Form row is now handled above in the main CSS */
     
     .results-grid {
         grid-template-columns: 1fr;
