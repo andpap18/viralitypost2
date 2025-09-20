@@ -234,9 +234,7 @@ form.addEventListener("submit", async (e) => {
         }
         
         // Get selected platforms
-        const selectedPlatforms = Array.from(platformCheckboxes)
-            .filter(cb => cb.checked)
-            .map(cb => cb.value);
+        const selectedPlatforms = getSelectedPlatforms();
         
         console.log("Selected platforms:", selectedPlatforms);
         
@@ -279,9 +277,6 @@ form.addEventListener("submit", async (e) => {
         console.log("TikTok content:", data.tiktok);
         console.log("YouTube content:", data.youtube);
         console.log("Pinterest content:", data.pinterest);
-        
-        // Get selected platforms
-        const selectedPlatforms = getSelectedPlatforms();
         
         // Render results only for selected platforms
         if (selectedPlatforms.includes('instagram')) {
