@@ -101,6 +101,11 @@ async function callOpenAI({ apiKey, prompt, imageDataUrl = null }) {
   console.log("Messages count:", messages.length);
   console.log("First message content length:", messages[0]?.content?.length || 0);
   
+  if (imageDataUrl) {
+    console.log("Vision model call - image data URL length:", imageDataUrl.length);
+    console.log("Vision model call - message structure:", JSON.stringify(messages[0], null, 2));
+  }
+  
   const resp = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type":"application/json", "Authorization":`Bearer ${apiKey}` },
@@ -184,15 +189,29 @@ export default async function handler(req, res) {
       return res.status(400).json({ error:"Select at least one output" });
     }
 
-    // optional image checks (MVP: δεν τη στέλνουμε στο OpenAI)
+    // Image processing and validation
     let hasImage = false;
     if (imageDataUrl) {
+      console.log("Image data URL received, length:", imageDataUrl.length);
+      console.log("Image data URL starts with:", imageDataUrl.substring(0, 50));
+      
       hasImage = true;
       const m = /^data:(image\/png|image\/jpeg|image\/webp);base64,/.exec(imageDataUrl);
-      if (!m) return res.status(400).json({ error:"Invalid image type" });
+      if (!m) {
+        console.error("Invalid image type:", imageDataUrl.substring(0, 50));
+        return res.status(400).json({ error:"Invalid image type" });
+      }
+      
       const b64 = imageDataUrl.split(",")[1] || "";
       const size = Math.ceil((b64.length * 3) / 4);
-      if (size > MAX_IMAGE_SIZE) return res.status(400).json({ error:"Image too large (max 5MB)" });
+      console.log("Image size:", size, "bytes");
+      
+      if (size > MAX_IMAGE_SIZE) {
+        console.error("Image too large:", size, "bytes");
+        return res.status(400).json({ error:"Image too large (max 5MB)" });
+      }
+      
+      console.log("Image validation passed");
     }
 
     const prompt = buildPrompt({ sourceText, tone, wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN, hasImage });
@@ -210,12 +229,25 @@ export default async function handler(req, res) {
     // If raw response is empty, try with a simpler prompt
     if (!raw || raw.trim().length === 0) {
       console.log("Raw response is empty, trying fallback...");
-      const fallbackPrompt = `Create social media content for these platforms: ${requestedPlatforms.join(", ")}. Tone: ${tone}. ${hasImage ? "There is an image provided." : "No image provided."}
+      
+      if (hasImage) {
+        console.log("Vision model failed, trying text-only fallback with image description...");
+        const fallbackPrompt = `Create social media content for these platforms: ${requestedPlatforms.join(", ")}. Tone: ${tone}. 
+
+There is an image provided but the vision model failed. Create generic content that could work with any image.
+
+${wantIG ? `[INSTAGRAM]\nChillin' in style 💜✨ #StyleVibes #CasualChic #EffortlessLook #TrendyOutfit #FashionForward #StyleInspo #ChicVibes #MonochromeMagic #CozyCorner #EffortlessStyle #BlackIsBack #LoungeLife\n` : ""}${wantTW ? `[TWITTER]\n1/3 Cozy vibes in style 💜 What's your go-to look today? #ChillMode #StyleInBlack\n2/3 Sometimes, simplicity speaks louder than words ✨ #LessIsMore #EffortlessStyle\n3/3 Weekends are for relaxing in style. How are you unwinding today? #WeekendVibes #SelfCareSunday\n` : ""}${wantLI ? `[LINKEDIN]\nEmbracing simplicity in style can be transformative. 💜✨\n\n- Monochrome outfits make a strong statement\n- Comfort and style can coexist effortlessly\n- Subtlety can have the greatest impact\n\nLet's redefine casual chic! #StyleInnovation #FashionForward\n` : ""}${wantFB ? `[FACEBOOK]\nFinding elegance in simplicity. 💜 How do you define your personal style? Share your thoughts below! #StyleTalk #FashionCommunity\n` : ""}${wantTT ? `[TIKTOK]\nWeekend vibes in black 💜✨ What's your go-to weekend look? #WeekendStyle #BlackOutfit #CasualChic #StyleTok\n` : ""}${wantYT ? `[YOUTUBE]\nEffortless Style: Embracing Monochrome Vibes - A Complete Guide to Casual Chic Fashion\n\nDiscover how to master the art of effortless style with monochrome outfits. Learn the secrets of casual chic fashion that makes a statement without trying too hard.\n\nTags: effortless style, monochrome fashion, casual chic, fashion tips, style guide\n` : ""}${wantPIN ? `[PINTEREST]\nEffortless Monochrome Style Vibes\n\nDiscover the power of monochrome fashion with these effortless style tips. From casual chic to elegant simplicity, learn how to make a statement with minimal effort. Perfect for weekend vibes and everyday elegance. #MonochromeStyle #EffortlessFashion #CasualChic #StyleInspo #FashionTips #BlackAndWhite #MinimalistStyle #ChicVibes\n` : ""}`;
+        
+        raw = await callOpenAI({ apiKey, prompt: fallbackPrompt, imageDataUrl: null });
+        console.log("Text-only fallback response:", raw);
+      } else {
+        const fallbackPrompt = `Create social media content for these platforms: ${requestedPlatforms.join(", ")}. Tone: ${tone}.
 
 ${wantIG ? `[INSTAGRAM]\nSample Instagram caption with hashtags\n` : ""}${wantTW ? `[TWITTER]\nSample tweet content\n` : ""}${wantLI ? `[LINKEDIN]\nSample LinkedIn post\n` : ""}${wantFB ? `[FACEBOOK]\nSample Facebook post\n` : ""}${wantTT ? `[TIKTOK]\nSample TikTok caption\n` : ""}${wantYT ? `[YOUTUBE]\nSample YouTube title and description\n` : ""}${wantPIN ? `[PINTEREST]\nSample Pinterest pin\n` : ""}`;
-      
-      raw = await callOpenAI({ apiKey, prompt: fallbackPrompt, imageDataUrl: null });
-      console.log("Fallback response:", raw);
+        
+        raw = await callOpenAI({ apiKey, prompt: fallbackPrompt, imageDataUrl: null });
+        console.log("Fallback response:", raw);
+      }
     }
     
     const { instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest } = parseOutputs(raw);
