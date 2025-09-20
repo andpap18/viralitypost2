@@ -154,6 +154,20 @@ export default async function handler(req, res) {
   console.log("API Key exists:", !!apiKey);
   console.log("API Key length:", apiKey?.length || 0);
   console.log("API Key starts with:", apiKey?.substring(0, 10) || "N/A");
+  
+  // Test API key with a simple call
+  try {
+    const testResp = await fetch("https://api.openai.com/v1/models", {
+      headers: { "Authorization": `Bearer ${apiKey}` }
+    });
+    console.log("API Key test status:", testResp.status);
+    if (!testResp.ok) {
+      const errorData = await testResp.json().catch(() => ({}));
+      console.error("API Key test failed:", errorData);
+    }
+  } catch (err) {
+    console.error("API Key test error:", err.message);
+  }
 
   try {
     const { sourceText, tone, outputs, imageDataUrl } = req.body || {};
@@ -189,11 +203,23 @@ export default async function handler(req, res) {
     console.log("Has image:", hasImage);
     console.log("Image data URL length:", imageDataUrl?.length || 0);
     
-    const raw = await callOpenAI({ apiKey, prompt, imageDataUrl });
+    let raw = await callOpenAI({ apiKey, prompt, imageDataUrl });
     console.log("Raw AI response:", raw);
     console.log("Raw AI response length:", raw?.length || 0);
+    
+    // If raw response is empty, try with a simpler prompt
+    if (!raw || raw.trim().length === 0) {
+      console.log("Raw response is empty, trying fallback...");
+      const fallbackPrompt = `Create social media content for these platforms: ${requestedPlatforms.join(", ")}. Tone: ${tone}. ${hasImage ? "There is an image provided." : "No image provided."}
+
+${wantIG ? `[INSTAGRAM]\nSample Instagram caption with hashtags\n` : ""}${wantTW ? `[TWITTER]\nSample tweet content\n` : ""}${wantLI ? `[LINKEDIN]\nSample LinkedIn post\n` : ""}${wantFB ? `[FACEBOOK]\nSample Facebook post\n` : ""}${wantTT ? `[TIKTOK]\nSample TikTok caption\n` : ""}${wantYT ? `[YOUTUBE]\nSample YouTube title and description\n` : ""}${wantPIN ? `[PINTEREST]\nSample Pinterest pin\n` : ""}`;
+      
+      raw = await callOpenAI({ apiKey, prompt: fallbackPrompt, imageDataUrl: null });
+      console.log("Fallback response:", raw);
+    }
+    
     const { instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest } = parseOutputs(raw);
-    console.log("Parsed outputs:", { instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest });
+    console.log("Final parsed outputs:", { instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest });
 
     res.setHeader("Cache-Control", "no-store");
     return res.status(200).json({ instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest });
