@@ -29,6 +29,13 @@ function showToast(message, type = 'success') {
     }, 3000);
 }
 
+// Get selected platforms
+function getSelectedPlatforms() {
+    return Array.from(platformCheckboxes)
+        .filter(cb => cb.checked)
+        .map(cb => cb.value);
+}
+
 // Check if form can be submitted
 function canGenerate() {
     const hasText = source.value.trim().length > 0;
@@ -142,6 +149,23 @@ async function copyToClipboard(text, platform) {
     }
 }
 
+// Show/hide result cards based on selected platforms
+function updateResultCardsVisibility() {
+    const selectedPlatforms = getSelectedPlatforms();
+    const allResultCards = document.querySelectorAll('.result-card');
+    
+    allResultCards.forEach(card => {
+        const platformValue = card.id.replace('Card', '').toLowerCase();
+        const isSelected = selectedPlatforms.includes(platformValue);
+        
+        if (isSelected) {
+            card.style.display = 'block';
+        } else {
+            card.style.display = 'none';
+        }
+    });
+}
+
 // Render content block
 function renderContentBlock(container, platform, content) {
     if (!content || content.trim() === "") {
@@ -229,14 +253,34 @@ form.addEventListener("submit", async (e) => {
         console.log("YouTube content:", data.youtube);
         console.log("Pinterest content:", data.pinterest);
         
-        // Render results
-        renderContentBlock(document.getElementById("outInstagram"), "Instagram", data.instagram);
-        renderContentBlock(document.getElementById("outTwitter"), "Twitter", data.twitter);
-        renderContentBlock(document.getElementById("outLinkedIn"), "LinkedIn", data.linkedin);
-        renderContentBlock(document.getElementById("outFacebook"), "Facebook", data.facebook);
-        renderContentBlock(document.getElementById("outTikTok"), "TikTok", data.tiktok);
-        renderContentBlock(document.getElementById("outYouTube"), "YouTube", data.youtube);
-        renderContentBlock(document.getElementById("outPinterest"), "Pinterest", data.pinterest);
+        // Get selected platforms
+        const selectedPlatforms = getSelectedPlatforms();
+        
+        // Render results only for selected platforms
+        if (selectedPlatforms.includes('instagram')) {
+            renderContentBlock(document.getElementById("outInstagram"), "Instagram", data.instagram);
+        }
+        if (selectedPlatforms.includes('twitter')) {
+            renderContentBlock(document.getElementById("outTwitter"), "Twitter", data.twitter);
+        }
+        if (selectedPlatforms.includes('linkedin')) {
+            renderContentBlock(document.getElementById("outLinkedIn"), "LinkedIn", data.linkedin);
+        }
+        if (selectedPlatforms.includes('facebook')) {
+            renderContentBlock(document.getElementById("outFacebook"), "Facebook", data.facebook);
+        }
+        if (selectedPlatforms.includes('tiktok')) {
+            renderContentBlock(document.getElementById("outTikTok"), "TikTok", data.tiktok);
+        }
+        if (selectedPlatforms.includes('youtube')) {
+            renderContentBlock(document.getElementById("outYouTube"), "YouTube", data.youtube);
+        }
+        if (selectedPlatforms.includes('pinterest')) {
+            renderContentBlock(document.getElementById("outPinterest"), "Pinterest", data.pinterest);
+        }
+        
+        // Update visibility of result cards
+        updateResultCardsVisibility();
         
         // Show results section
         results.classList.remove("hidden");
@@ -276,11 +320,15 @@ resetBtn.addEventListener("click", () => {
 // Event listeners for form validation
 source.addEventListener("input", updateSubmitButton);
 platformCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener("change", updateSubmitButton);
+    checkbox.addEventListener("change", () => {
+        updateSubmitButton();
+        updateResultCardsVisibility();
+    });
 });
 
 // Initialize
 updateSubmitButton();
+updateResultCardsVisibility();
 
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
