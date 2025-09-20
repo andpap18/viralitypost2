@@ -175,7 +175,20 @@ export default async function handler(req, res) {
   }
 
   try {
+    console.log("=== API ROUTE TRACE ===");
+    console.log("Request method:", req.method);
+    console.log("Request headers:", req.headers);
+    console.log("Request body keys:", Object.keys(req.body || {}));
+    
     const { sourceText, tone, outputs, imageDataUrl } = req.body || {};
+    
+    console.log("Parsed request data:", {
+      sourceText: sourceText ? `"${sourceText.substring(0, 50)}..."` : "empty",
+      tone,
+      outputs,
+      hasImageDataUrl: !!imageDataUrl,
+      imageDataUrlLength: imageDataUrl?.length || 0
+    });
 
     const outs = Array.isArray(outputs) ? outputs : [];
     const wantIG = outs.includes("instagram");
@@ -185,7 +198,11 @@ export default async function handler(req, res) {
     const wantTT = outs.includes("tiktok");
     const wantYT = outs.includes("youtube");
     const wantPIN = outs.includes("pinterest");
+    
+    console.log("Platform flags:", { wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN });
+    
     if (!wantIG && !wantTW && !wantLI && !wantFB && !wantTT && !wantYT && !wantPIN) {
+      console.error("No platforms selected");
       return res.status(400).json({ error:"Select at least one output" });
     }
 
@@ -282,6 +299,13 @@ ${wantIG ? `[INSTAGRAM]\nSample Instagram caption with hashtags\n` : ""}${wantTW
     
     const { instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest } = parseOutputs(raw);
     console.log("Final parsed outputs:", { instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest });
+    
+    // Final check - if still empty, return error
+    const hasAnyContent = instagram || twitter || linkedin || facebook || tiktok || youtube || pinterest;
+    if (!hasAnyContent) {
+      console.error("CRITICAL: All content is still empty after fallback!");
+      return res.status(500).json({ error: "Content generation failed. Please try again." });
+    }
 
     res.setHeader("Cache-Control", "no-store");
     return res.status(200).json({ instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest });
