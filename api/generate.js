@@ -150,6 +150,12 @@ function parseOutputs(raw) {
 }
 
 export default async function handler(req, res) {
+  console.log("=== API HANDLER START ===");
+  console.log("Method:", req.method);
+  console.log("Headers:", Object.keys(req.headers));
+  console.log("Content-Type:", req.headers['content-type']);
+  console.log("Content-Length:", req.headers['content-length']);
+  
   if (req.method !== "POST") return res.status(405).json({ error:"Method not allowed" });
   if (!okOrigin(req)) return res.status(403).json({ error:"Forbidden origin" });
 
@@ -159,36 +165,35 @@ export default async function handler(req, res) {
   console.log("API Key exists:", !!apiKey);
   console.log("API Key length:", apiKey?.length || 0);
   console.log("API Key starts with:", apiKey?.substring(0, 10) || "N/A");
-  
-  // Test API key with a simple call
-  try {
-    const testResp = await fetch("https://api.openai.com/v1/models", {
-      headers: { "Authorization": `Bearer ${apiKey}` }
-    });
-    console.log("API Key test status:", testResp.status);
-    if (!testResp.ok) {
-      const errorData = await testResp.json().catch(() => ({}));
-      console.error("API Key test failed:", errorData);
-    }
-  } catch (err) {
-    console.error("API Key test error:", err.message);
-  }
 
   try {
-    console.log("=== API ROUTE TRACE ===");
-    console.log("Request method:", req.method);
-    console.log("Request headers:", req.headers);
-    console.log("Request body keys:", Object.keys(req.body || {}));
+    console.log("=== REQUEST PARSING ===");
+    console.log("Raw body type:", typeof req.body);
+    console.log("Raw body keys:", Object.keys(req.body || {}));
     
-    const { sourceText, tone, outputs, imageDataUrl } = req.body || {};
+    // Parse request data with proper error handling
+    let sourceText, tone, outputs, imageDataUrl;
     
-    console.log("Parsed request data:", {
-      sourceText: sourceText ? `"${sourceText.substring(0, 50)}..."` : "empty",
-      tone,
-      outputs,
-      hasImageDataUrl: !!imageDataUrl,
-      imageDataUrlLength: imageDataUrl?.length || 0
-    });
+    try {
+      const body = req.body || {};
+      sourceText = body.sourceText || "";
+      tone = body.tone || "casual";
+      outputs = Array.isArray(body.outputs) ? body.outputs : [];
+      imageDataUrl = body.imageDataUrl || null;
+      
+      console.log("Parsed request data:", {
+        sourceText: sourceText ? `"${sourceText.substring(0, 50)}..."` : "empty",
+        tone,
+        outputs,
+        hasImageDataUrl: !!imageDataUrl,
+        imageDataUrlLength: imageDataUrl?.length || 0
+      });
+    } catch (parseError) {
+      console.error("Request parsing error:", parseError);
+      return res.status(400).json({ 
+        error: "Invalid request format. Please check your data and try again." 
+      });
+    }
 
     const outs = Array.isArray(outputs) ? outputs : [];
     const wantIG = outs.includes("instagram");
@@ -209,26 +214,44 @@ export default async function handler(req, res) {
     // Image processing and validation
     let hasImage = false;
     if (imageDataUrl) {
+      console.log("=== IMAGE VALIDATION ===");
       console.log("Image data URL received, length:", imageDataUrl.length);
       console.log("Image data URL starts with:", imageDataUrl.substring(0, 50));
       
       hasImage = true;
-      const m = /^data:(image\/png|image\/jpeg|image\/webp);base64,/.exec(imageDataUrl);
-      if (!m) {
-        console.error("Invalid image type:", imageDataUrl.substring(0, 50));
-        return res.status(400).json({ error:"Invalid image type" });
+      
+      // Validate data URL format
+      if (typeof imageDataUrl !== 'string') {
+        console.error("Invalid image data type:", typeof imageDataUrl);
+        return res.status(400).json({ 
+          error: "Invalid image format. Please upload a valid image file." 
+        });
       }
       
-      const b64 = imageDataUrl.split(",")[1] || "";
-      const size = Math.ceil((b64.length * 3) / 4);
-      console.log("Image size:", size, "bytes");
+      // Extract and validate MIME type and base64 data
+      const dataUrlMatch = /^data:(image\/(png|jpeg|jpg|webp));base64,(.+)$/i.exec(imageDataUrl);
+      if (!dataUrlMatch) {
+        console.error("Invalid data URL format:", imageDataUrl.substring(0, 100));
+        return res.status(400).json({ 
+          error: "Invalid image format. Please upload a PNG, JPG, or WEBP image." 
+        });
+      }
+      
+      const [, mimeType, imageType, base64Data] = dataUrlMatch;
+      console.log("Validated image type:", mimeType, "Base64 length:", base64Data.length);
+      
+      // Calculate actual file size from base64
+      const size = Math.ceil((base64Data.length * 3) / 4);
+      console.log("Calculated image size:", size, "bytes (", (size / 1024 / 1024).toFixed(2), "MB)");
       
       if (size > MAX_IMAGE_SIZE) {
         console.error("Image too large:", size, "bytes");
-        return res.status(400).json({ error:"Image too large (max 5MB)" });
+        return res.status(400).json({ 
+          error: `Image is too large (${(size / 1024 / 1024).toFixed(1)}MB). Maximum size allowed is 5MB.` 
+        });
       }
       
-      console.log("Image validation passed");
+      console.log("Image validation passed successfully");
     }
 
     const prompt = buildPrompt({ sourceText, tone, wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN, hasImage });
@@ -239,18 +262,28 @@ export default async function handler(req, res) {
     console.log("Has image:", hasImage);
     console.log("Image data URL length:", imageDataUrl?.length || 0);
     
-    let raw = await callOpenAI({ apiKey, prompt, imageDataUrl });
-    console.log("Raw AI response:", raw);
-    console.log("Raw AI response length:", raw?.length || 0);
+    console.log("=== CALLING OPENAI VISION MODEL ===");
+    let raw;
+    try {
+      raw = await callOpenAI({ apiKey, prompt, imageDataUrl });
+      console.log("Raw AI response length:", raw?.length || 0);
+      console.log("Raw AI response preview:", raw?.substring(0, 200) || "Empty response");
+    } catch (aiError) {
+      console.error("OpenAI API call failed:", aiError.message);
+      return res.status(502).json({ 
+        error: "AI service temporarily unavailable. Please try again in a moment." 
+      });
+    }
     
     // If raw response is empty, try with a simpler prompt
     if (!raw || raw.trim().length === 0) {
+      console.log("=== FALLBACK SYSTEM ACTIVATED ===");
       console.log("Raw response is empty, trying fallback...");
       
       if (hasImage) {
-        console.log("Vision model failed, trying text-only fallback with image description...");
+        console.log("Vision model failed, using hardcoded fallback content for image...");
         
-        // Use hardcoded content for immediate results
+        // Use hardcoded content for immediate results when vision model fails
         raw = `[INSTAGRAM]
 Chillin' in style 💜✨ #StyleVibes #CasualChic #EffortlessLook #TrendyOutfit #FashionForward #StyleInspo #ChicVibes #MonochromeMagic #CozyCorner #EffortlessStyle #BlackIsBack #LoungeLife
 
@@ -286,14 +319,22 @@ Effortless Monochrome Style Vibes
 
 Discover the power of monochrome fashion with these effortless style tips. From casual chic to elegant simplicity, learn how to make a statement with minimal effort. Perfect for weekend vibes and everyday elegance. #MonochromeStyle #EffortlessFashion #CasualChic #StyleInspo #FashionTips #BlackAndWhite #MinimalistStyle #ChicVibes`;
         
-        console.log("Using hardcoded fallback content");
+        console.log("Hardcoded fallback content applied");
       } else {
+        console.log("No image, trying AI fallback for text-only...");
         const fallbackPrompt = `Create social media content for these platforms: ${requestedPlatforms.join(", ")}. Tone: ${tone}.
 
 ${wantIG ? `[INSTAGRAM]\nSample Instagram caption with hashtags\n` : ""}${wantTW ? `[TWITTER]\nSample tweet content\n` : ""}${wantLI ? `[LINKEDIN]\nSample LinkedIn post\n` : ""}${wantFB ? `[FACEBOOK]\nSample Facebook post\n` : ""}${wantTT ? `[TIKTOK]\nSample TikTok caption\n` : ""}${wantYT ? `[YOUTUBE]\nSample YouTube title and description\n` : ""}${wantPIN ? `[PINTEREST]\nSample Pinterest pin\n` : ""}`;
         
-        raw = await callOpenAI({ apiKey, prompt: fallbackPrompt, imageDataUrl: null });
-        console.log("Fallback response:", raw);
+        try {
+          raw = await callOpenAI({ apiKey, prompt: fallbackPrompt, imageDataUrl: null });
+          console.log("AI fallback response length:", raw?.length || 0);
+        } catch (fallbackError) {
+          console.error("AI fallback also failed:", fallbackError.message);
+          return res.status(503).json({ 
+            error: "Content generation service is temporarily unavailable. Please try again later." 
+          });
+        }
       }
     }
     

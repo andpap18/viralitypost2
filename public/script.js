@@ -318,9 +318,17 @@ form.addEventListener("submit", async (e) => {
         console.log("Response status:", response.status);
         
         if (!response.ok) {
-            const errorText = await response.text();
-            console.error("API Error:", errorText);
-            throw new Error(`Server error: ${response.status} - ${errorText}`);
+            let errorMessage = `Server error: ${response.status}`;
+            try {
+                const errorData = await response.json();
+                errorMessage = errorData.error || errorMessage;
+                console.error("API Error (JSON):", errorData);
+            } catch (jsonError) {
+                const errorText = await response.text();
+                errorMessage = errorText || errorMessage;
+                console.error("API Error (Text):", errorText);
+            }
+            throw new Error(errorMessage);
         }
         
         const data = await response.json();
@@ -347,7 +355,7 @@ form.addEventListener("submit", async (e) => {
         
         if (allEmpty) {
             console.error("CRITICAL: All platform content is empty!");
-            showToast("Content generation failed. Please try again.", "error");
+            showToast("Image processed but no content returned. Please try with a different image or add some text.", "error");
             return;
         }
         
