@@ -11,6 +11,15 @@ const resetBtn = document.getElementById("resetBtn");
 const results = document.getElementById("results");
 const toast = document.getElementById("toast");
 
+// Debug: Check if elements exist
+console.log("Image elements check:", {
+    imageInput: !!imageInput,
+    imageUploadArea: !!imageUploadArea,
+    previewImg: !!previewImg,
+    imagePreview: !!imagePreview,
+    removeImageBtn: !!removeImageBtn
+});
+
 // Platform checkboxes
 const platformCheckboxes = document.querySelectorAll('.platform-option input[type="checkbox"]');
 
@@ -60,35 +69,44 @@ function updateSubmitButton() {
 }
 
 // Image upload handling
-imageUploadArea.addEventListener("click", () => {
-    imageInput.click();
-});
+if (imageUploadArea && imageInput) {
+    imageUploadArea.addEventListener("click", () => {
+        console.log("Image upload area clicked");
+        imageInput.click();
+    });
+} else {
+    console.error("Image upload elements not found!");
+}
 
-imageUploadArea.addEventListener("dragover", (e) => {
-    e.preventDefault();
-    imageUploadArea.style.borderColor = "var(--primary)";
-    imageUploadArea.style.background = "rgba(99, 102, 241, 0.05)";
-});
+if (imageUploadArea) {
+    imageUploadArea.addEventListener("dragover", (e) => {
+        e.preventDefault();
+        imageUploadArea.style.borderColor = "var(--primary)";
+        imageUploadArea.style.background = "rgba(99, 102, 241, 0.05)";
+    });
 
-imageUploadArea.addEventListener("dragleave", (e) => {
-    e.preventDefault();
-    imageUploadArea.style.borderColor = "rgba(255, 255, 255, 0.2)";
-    imageUploadArea.style.background = "var(--bg-input)";
-});
+    imageUploadArea.addEventListener("dragleave", (e) => {
+        e.preventDefault();
+        imageUploadArea.style.borderColor = "rgba(255, 255, 255, 0.2)";
+        imageUploadArea.style.background = "var(--bg-input)";
+    });
 
-imageUploadArea.addEventListener("drop", (e) => {
-    e.preventDefault();
-    imageUploadArea.style.borderColor = "rgba(255, 255, 255, 0.2)";
-    imageUploadArea.style.background = "var(--bg-input)";
-    
-    const files = e.dataTransfer.files;
-    if (files.length > 0) {
-        imageInput.files = files;
-        handleImageUpload();
-    }
-});
+    imageUploadArea.addEventListener("drop", (e) => {
+        e.preventDefault();
+        imageUploadArea.style.borderColor = "rgba(255, 255, 255, 0.2)";
+        imageUploadArea.style.background = "var(--bg-input)";
+        
+        const files = e.dataTransfer.files;
+        if (files.length > 0 && imageInput) {
+            imageInput.files = files;
+            handleImageUpload();
+        }
+    });
+}
 
-imageInput.addEventListener("change", handleImageUpload);
+if (imageInput) {
+    imageInput.addEventListener("change", handleImageUpload);
+}
 
 function handleImageUpload() {
     const file = imageInput.files?.[0];
@@ -133,11 +151,15 @@ function hideImagePreview() {
     previewImg.src = "";
 }
 
-removeImageBtn.addEventListener("click", () => {
-    imageInput.value = "";
-    hideImagePreview();
-    updateSubmitButton();
-});
+if (removeImageBtn) {
+    removeImageBtn.addEventListener("click", () => {
+        if (imageInput) {
+            imageInput.value = "";
+        }
+        hideImagePreview();
+        updateSubmitButton();
+    });
+}
 
 // Copy to clipboard function
 async function copyToClipboard(text, platform) {
