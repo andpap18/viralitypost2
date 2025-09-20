@@ -57,6 +57,7 @@
 
 html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
 }
 
 body {
@@ -145,6 +146,8 @@ body {
                 radial-gradient(ellipse at bottom, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
     position: relative;
     overflow: hidden;
+    /* Remove default padding-top since we're using inline style */
+    padding-top: 0;
 }
 
 .hero-container {
@@ -241,6 +244,19 @@ body {
     margin-top: var(--space-md);
     color: var(--text-muted);
     font-size: 0.875rem;
+}
+
+/* Responsive CTA Button */
+.cta-responsive {
+    width: 100%;
+    max-width: 320px;
+}
+
+@media (min-width: 640px) {
+    .cta-responsive {
+        width: auto;
+        max-width: none;
+    }
 }
 
 /* Hero Visual */
@@ -611,6 +627,25 @@ body {
     display: flex;
     flex-direction: column;
     gap: var(--space-md);
+}
+
+/* Responsive Platform Grid */
+.platform-grid-responsive {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-md);
+}
+
+@media (min-width: 640px) {
+    .platform-grid-responsive {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 768px) {
+    .platform-grid-responsive {
+        grid-template-columns: repeat(4, 1fr);
+    }
 }
 
 .platform-option {
@@ -1336,7 +1371,8 @@ body {
     }
     
     .hero-title {
-        font-size: 2rem;
+        /* Use clamp for responsive sizing - override inline style for mobile */
+        font-size: clamp(1.5rem, 6vw, 2rem) !important;
         line-height: 1.2;
         margin-bottom: var(--space-md);
     }
@@ -1456,7 +1492,8 @@ body {
     }
     
     .hero-title {
-        font-size: 1.75rem;
+        /* Use clamp for very small screens */
+        font-size: clamp(1.25rem, 5vw, 1.75rem) !important;
         line-height: 1.1;
         margin-bottom: var(--space-sm);
     }
