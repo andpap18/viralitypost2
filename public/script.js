@@ -154,6 +154,11 @@ function updateResultCardsVisibility() {
     const selectedPlatforms = getSelectedPlatforms();
     const allResultCards = document.querySelectorAll('.result-card');
     
+    // Only proceed if we have result cards and the results section exists
+    if (allResultCards.length === 0) {
+        return;
+    }
+    
     allResultCards.forEach(card => {
         const platformValue = card.id.replace('Card', '').toLowerCase();
         const isSelected = selectedPlatforms.includes(platformValue);
@@ -320,15 +325,16 @@ resetBtn.addEventListener("click", () => {
 // Event listeners for form validation
 source.addEventListener("input", updateSubmitButton);
 platformCheckboxes.forEach(checkbox => {
-    checkbox.addEventListener("change", () => {
-        updateSubmitButton();
-        updateResultCardsVisibility();
-    });
+    checkbox.addEventListener("change", updateSubmitButton);
 });
 
 // Initialize
 updateSubmitButton();
-updateResultCardsVisibility();
+
+// Initialize result cards visibility after DOM is fully loaded
+document.addEventListener('DOMContentLoaded', () => {
+    updateResultCardsVisibility();
+});
 
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
