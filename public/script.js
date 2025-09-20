@@ -196,6 +196,7 @@ function updateResultCardsVisibility() {
 // Render content block
 function renderContentBlock(container, platform, content) {
     if (!content || content.trim() === "") {
+        // Leave container empty so CSS ::before pseudo-element shows "No content generated"
         container.innerHTML = '<div class="result-content"></div>';
         return;
     }
@@ -278,35 +279,54 @@ form.addEventListener("submit", async (e) => {
         console.log("YouTube content:", data.youtube);
         console.log("Pinterest content:", data.pinterest);
         
-        // Render results only for selected platforms
+        // First, hide all result cards
+        const allResultCards = document.querySelectorAll('.result-card');
+        allResultCards.forEach(card => {
+            card.style.display = 'none';
+        });
+        
+        // Then show and render content only for selected platforms
         if (selectedPlatforms.includes('instagram')) {
+            const card = document.getElementById("instagramCard");
+            card.style.display = 'block';
             renderContentBlock(document.getElementById("outInstagram"), "Instagram", data.instagram);
         }
         if (selectedPlatforms.includes('twitter')) {
+            const card = document.getElementById("twitterCard");
+            card.style.display = 'block';
             renderContentBlock(document.getElementById("outTwitter"), "Twitter", data.twitter);
         }
         if (selectedPlatforms.includes('linkedin')) {
+            const card = document.getElementById("linkedinCard");
+            card.style.display = 'block';
             renderContentBlock(document.getElementById("outLinkedIn"), "LinkedIn", data.linkedin);
         }
         if (selectedPlatforms.includes('facebook')) {
+            const card = document.getElementById("facebookCard");
+            card.style.display = 'block';
             renderContentBlock(document.getElementById("outFacebook"), "Facebook", data.facebook);
         }
         if (selectedPlatforms.includes('tiktok')) {
+            const card = document.getElementById("tiktokCard");
+            card.style.display = 'block';
             renderContentBlock(document.getElementById("outTikTok"), "TikTok", data.tiktok);
         }
         if (selectedPlatforms.includes('youtube')) {
+            const card = document.getElementById("youtubeCard");
+            card.style.display = 'block';
             renderContentBlock(document.getElementById("outYouTube"), "YouTube", data.youtube);
         }
         if (selectedPlatforms.includes('pinterest')) {
+            const card = document.getElementById("pinterestCard");
+            card.style.display = 'block';
             renderContentBlock(document.getElementById("outPinterest"), "Pinterest", data.pinterest);
         }
         
-        // Update visibility of result cards
-        updateResultCardsVisibility();
-        
-        // Show results section
-        results.classList.remove("hidden");
-        results.scrollIntoView({ behavior: "smooth", block: "start" });
+        // Show results section only after all content is rendered
+        setTimeout(() => {
+            results.classList.remove("hidden");
+            results.scrollIntoView({ behavior: "smooth", block: "start" });
+        }, 100);
         
         showToast("Content generated successfully!", "success");
         
