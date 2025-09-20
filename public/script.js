@@ -271,15 +271,15 @@ form.addEventListener("submit", async (e) => {
         console.log("Received data:", data);
         
         // Debug: Log each platform's content
-        console.log("Full API Response:", data);
+        console.log("Full API Response:", JSON.stringify(data, null, 2));
         console.log("Selected platforms:", selectedPlatforms);
-        console.log("Instagram content:", data.instagram);
-        console.log("Twitter content:", data.twitter);
-        console.log("LinkedIn content:", data.linkedin);
-        console.log("Facebook content:", data.facebook);
-        console.log("TikTok content:", data.tiktok);
-        console.log("YouTube content:", data.youtube);
-        console.log("Pinterest content:", data.pinterest);
+        console.log("Instagram content:", data.instagram, "Length:", data.instagram?.length);
+        console.log("Twitter content:", data.twitter, "Length:", data.twitter?.length);
+        console.log("LinkedIn content:", data.linkedin, "Length:", data.linkedin?.length);
+        console.log("Facebook content:", data.facebook, "Length:", data.facebook?.length);
+        console.log("TikTok content:", data.tiktok, "Length:", data.tiktok?.length);
+        console.log("YouTube content:", data.youtube, "Length:", data.youtube?.length);
+        console.log("Pinterest content:", data.pinterest, "Length:", data.pinterest?.length);
         
         // First, hide all result cards
         const allResultCards = document.querySelectorAll('.result-card');
@@ -289,6 +289,7 @@ form.addEventListener("submit", async (e) => {
         
         // Then show and render content only for selected platforms
         if (selectedPlatforms.includes('instagram')) {
+            console.log("Showing Instagram card, content:", data.instagram);
             const card = document.getElementById("instagramCard");
             card.style.display = 'block';
             renderContentBlock(document.getElementById("outInstagram"), "Instagram", data.instagram);
