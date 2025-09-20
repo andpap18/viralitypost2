@@ -319,15 +319,42 @@ form.addEventListener("submit", async (e) => {
         
         if (!response.ok) {
             let errorMessage = `Server error: ${response.status}`;
+            let errorCode = 'UNKNOWN_ERROR';
+            
             try {
                 const errorData = await response.json();
                 errorMessage = errorData.error || errorMessage;
-                console.error("API Error (JSON):", errorData);
+                errorCode = errorData.code || errorCode;
+                console.error("API Error (JSON):", {
+                    status: response.status,
+                    message: errorMessage,
+                    code: errorCode,
+                    requestId: errorData.requestId
+                });
             } catch (jsonError) {
                 const errorText = await response.text();
                 errorMessage = errorText || errorMessage;
-                console.error("API Error (Text):", errorText);
+                console.error("API Error (Text):", {
+                    status: response.status,
+                    message: errorMessage
+                });
             }
+            
+            // Show specific error messages based on error code
+            if (errorCode === 'NO_PLATFORMS') {
+                errorMessage = "Please select at least one social media platform.";
+            } else if (errorCode === 'NO_CONTENT') {
+                errorMessage = "Please provide either text content or upload an image.";
+            } else if (errorCode === 'PARSE_ERROR' || response.status === 422) {
+                // Keep the specific error message from server
+            } else if (errorCode === 'AUTH_FAILED') {
+                errorMessage = "Service authentication failed. Please contact support.";
+            } else if (errorCode === 'RATE_LIMIT') {
+                errorMessage = "Too many requests. Please wait a moment and try again.";
+            } else if (errorCode === 'SERVICE_UNAVAILABLE') {
+                errorMessage = "Service temporarily unavailable. Please try again in a moment.";
+            }
+            
             throw new Error(errorMessage);
         }
         

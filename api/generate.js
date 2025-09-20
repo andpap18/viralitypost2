@@ -206,9 +206,13 @@ function parseOutputs(raw) {
 }
 
 export default async function handler(req, res) {
+  const requestId = Date.now().toString(36);
+  const isDev = process.env.NODE_ENV !== 'production';
+  
   console.log("=== API HANDLER START ===");
+  console.log("Request ID:", requestId);
   console.log("Method:", req.method);
-  console.log("Headers:", Object.keys(req.headers));
+  console.log("Runtime:", process.env.VERCEL_ENV || 'local');
   console.log("Content-Type:", req.headers['content-type']);
   console.log("Content-Length:", req.headers['content-length']);
   
@@ -216,17 +220,24 @@ export default async function handler(req, res) {
   if (!okOrigin(req)) return res.status(403).json({ error:"Forbidden origin" });
 
   const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey) return res.status(500).json({ error:"Missing OPENAI_API_KEY" });
+  if (!apiKey) {
+    console.error(`[${requestId}] Missing API key`);
+    return res.status(500).json({ error:"Missing OPENAI_API_KEY" });
+  }
   
-  console.log("API Key exists:", !!apiKey);
-  console.log("API Key length:", apiKey?.length || 0);
-  console.log("API Key starts with:", apiKey?.substring(0, 10) || "N/A");
+  console.log(`[${requestId}] API Key exists:`, !!apiKey);
+  console.log(`[${requestId}] API Key length:`, apiKey?.length || 0);
 
   try {
-    console.log("=== REQUEST PARSING ===");
-    console.log("Content-Type:", req.headers['content-type']);
-    console.log("Raw body type:", typeof req.body);
-    console.log("Raw body keys:", Object.keys(req.body || {}));
+    console.log(`[${requestId}] === REQUEST PARSING ===`);
+    console.log(`[${requestId}] Content-Type:`, req.headers['content-type']);
+    console.log(`[${requestId}] Raw body type:`, typeof req.body);
+    console.log(`[${requestId}] Raw body keys:`, Object.keys(req.body || {}));
+    
+    // Determine input kind
+    const contentType = req.headers['content-type'] || '';
+    const inputKind = contentType.includes('multipart/form-data') ? 'multipart' : 'json';
+    console.log(`[${requestId}] Input kind:`, inputKind);
     
     // Parse request data with proper error handling
     let sourceText, tone, outputs, imageData;
@@ -237,18 +248,33 @@ export default async function handler(req, res) {
       tone = body.tone || "casual";
       outputs = Array.isArray(body.outputs) ? body.outputs : [];
       
+      console.log(`[${requestId}] Basic data:`, {
+        hasText: !!sourceText.trim(),
+        textLength: sourceText.length,
+        tone,
+        platformsCount: outputs.length
+      });
+      
       // Handle image data - support multiple field names for compatibility
       const imageDataUri = body.imageDataUri || body.imageDataUrl || body.imageBase64 || null;
       let imageMimeType = null;
       let imageBase64Data = null;
       
       if (imageDataUri) {
-        console.log("Processing image data URI...");
-        console.log("Field name used:", body.imageDataUri ? "imageDataUri" : body.imageDataUrl ? "imageDataUrl" : "imageBase64");
+        console.log(`[${requestId}] Processing image data URI...`);
+        console.log(`[${requestId}] Field name used:`, body.imageDataUri ? "imageDataUri" : body.imageDataUrl ? "imageDataUrl" : "imageBase64");
         
         const { mimeType, base64Data } = parseDataUri(imageDataUri);
         imageMimeType = mimeType;
         imageBase64Data = base64Data;
+        
+        const decodedBytesLength = Math.ceil((base64Data.length * 3) / 4);
+        console.log(`[${requestId}] Image details:`, {
+          mimeType,
+          base64Length: base64Data.length,
+          decodedBytesLength,
+          sizeMB: (decodedBytesLength / 1024 / 1024).toFixed(2)
+        });
         
         // Validate the parsed image data
         validateImageData(imageMimeType, imageBase64Data);
@@ -260,32 +286,39 @@ export default async function handler(req, res) {
         };
       }
       
-      console.log("Parsed request data:", {
-        sourceText: sourceText ? `"${sourceText.substring(0, 50)}..."` : "empty",
-        tone,
-        outputs,
-        hasImageData: !!imageData,
-        imageMimeType,
-        imageBase64Length: imageBase64Data?.length || 0
+      console.log(`[${requestId}] Parsed request summary:`, {
+        hasText: !!sourceText.trim(),
+        hasImage: !!imageData,
+        platformsCount: outputs.length,
+        imageMimeType: imageData?.mimeType || 'N/A'
       });
     } catch (parseError) {
-      console.error("Request parsing error:", parseError);
+      console.error(`[${requestId}] Request parsing error:`, parseError.message);
+      console.error(`[${requestId}] Parse error stack:`, parseError.stack);
       
-      // Provide specific error messages based on the error type
+      // Map parsing errors to appropriate HTTP status codes
+      let statusCode = 400;
       let errorMessage = "Invalid request format. Please check your data and try again.";
       
       if (parseError.message.includes('Invalid image format')) {
+        statusCode = 422;
         errorMessage = parseError.message;
       } else if (parseError.message.includes('too large')) {
+        statusCode = 422;
         errorMessage = parseError.message;
       } else if (parseError.message.includes('Unsupported image type')) {
+        statusCode = 422;
         errorMessage = parseError.message;
       } else if (parseError.message) {
         errorMessage = parseError.message;
       }
       
-      return res.status(400).json({ 
-        error: errorMessage
+      console.log(`[${requestId}] Returning error:`, { statusCode, errorMessage });
+      
+      return res.status(statusCode).json({ 
+        error: errorMessage,
+        code: 'PARSE_ERROR',
+        requestId: isDev ? requestId : undefined
       });
     }
 
@@ -301,24 +334,36 @@ export default async function handler(req, res) {
     console.log("Platform flags:", { wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN });
     
     if (!wantIG && !wantTW && !wantLI && !wantFB && !wantTT && !wantYT && !wantPIN) {
-      console.error("No platforms selected");
-      return res.status(400).json({ error:"Select at least one output" });
+      console.error(`[${requestId}] No platforms selected`);
+      return res.status(400).json({ 
+        error: "Select at least one output platform.",
+        code: 'NO_PLATFORMS',
+        requestId: isDev ? requestId : undefined
+      });
     }
 
     // Determine if we have image data with proper guard clauses
     const hasImage = !!(imageData && imageData.dataUri && imageData.mimeType && imageData.base64Data);
     
+    console.log(`[${requestId}] Content validation:`, {
+      hasText: !!sourceText.trim(),
+      hasImage,
+      imageMimeType: imageData?.mimeType || 'N/A'
+    });
+    
     // Validate that we have either text or image
     if (!sourceText.trim() && !hasImage) {
-      console.error("No content provided - neither text nor image");
+      console.error(`[${requestId}] No content provided - neither text nor image`);
       return res.status(400).json({ 
-        error: "Please provide either text content or upload an image." 
+        error: "Please provide either text content or upload an image.",
+        code: 'NO_CONTENT',
+        requestId: isDev ? requestId : undefined
       });
     }
     
     // Additional validation for image-only requests
     if (!sourceText.trim() && hasImage) {
-      console.log("Image-only request detected - using default text context");
+      console.log(`[${requestId}] Image-only request detected - using default text context`);
     }
 
     const prompt = buildPrompt({ sourceText, tone, wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN, hasImage });
@@ -329,40 +374,61 @@ export default async function handler(req, res) {
     console.log("Has image:", hasImage);
     console.log("Image data URI length:", imageData?.dataUri?.length || 0);
     
-    console.log("=== CALLING OPENAI VISION MODEL ===");
-    console.log("Request ID:", Date.now()); // Temporary diagnostic ID
-    console.log("Input kind:", imageData ? "data-URI" : "text-only");
-    console.log("Image mime type:", imageData?.mimeType || "N/A");
-    console.log("Image size:", imageData ? `${(imageData.base64Data.length * 3 / 4 / 1024 / 1024).toFixed(2)}MB` : "N/A");
+    console.log(`[${requestId}] === CALLING OPENAI VISION MODEL ===`);
+    console.log(`[${requestId}] Input kind:`, imageData ? "data-URI" : "text-only");
+    console.log(`[${requestId}] Image mime type:`, imageData?.mimeType || "N/A");
+    console.log(`[${requestId}] Image size:`, imageData ? `${(imageData.base64Data.length * 3 / 4 / 1024 / 1024).toFixed(2)}MB` : "N/A");
     
     let raw;
     try {
       // Use the original data URI for the vision model call
       const imageDataUrl = imageData?.dataUri || null;
-      console.log("Calling OpenAI with image:", !!imageDataUrl);
+      console.log(`[${requestId}] Calling OpenAI with image:`, !!imageDataUrl);
       
+      const startTime = Date.now();
       raw = await callOpenAI({ apiKey, prompt, imageDataUrl });
-      console.log("Raw AI response length:", raw?.length || 0);
-      console.log("Raw AI response preview:", raw?.substring(0, 200) || "Empty response");
-    } catch (aiError) {
-      console.error("OpenAI API call failed:", aiError.message);
+      const endTime = Date.now();
       
-      // Map OpenAI errors to appropriate HTTP status codes
+      console.log(`[${requestId}] OpenAI response:`, {
+        length: raw?.length || 0,
+        duration: `${endTime - startTime}ms`,
+        preview: raw?.substring(0, 200) || "Empty response"
+      });
+    } catch (aiError) {
+      console.error(`[${requestId}] OpenAI API call failed:`, {
+        message: aiError.message,
+        status: aiError.status,
+        stack: isDev ? aiError.stack : undefined
+      });
+      
+      // Map OpenAI errors to appropriate HTTP status codes with detailed logging
       if (aiError.message.includes('Invalid API key') || aiError.message.includes('unauthorized')) {
+        console.error(`[${requestId}] Authentication failed - API key issue`);
         return res.status(401).json({ 
-          error: "AI service authentication failed. Please contact support." 
+          error: "AI service authentication failed. Please contact support.",
+          code: 'AUTH_FAILED',
+          requestId: isDev ? requestId : undefined
         });
       } else if (aiError.message.includes('rate limit') || aiError.message.includes('quota')) {
+        console.error(`[${requestId}] Rate limit exceeded`);
         return res.status(429).json({ 
-          error: "AI service rate limit exceeded. Please try again in a moment." 
+          error: "AI service rate limit exceeded. Please try again in a moment.",
+          code: 'RATE_LIMIT',
+          requestId: isDev ? requestId : undefined
         });
       } else if (aiError.message.includes('timeout') || aiError.message.includes('network')) {
+        console.error(`[${requestId}] Network/timeout error`);
         return res.status(503).json({ 
-          error: "AI service temporarily unavailable. Please try again in a moment." 
+          error: "AI service temporarily unavailable. Please try again in a moment.",
+          code: 'SERVICE_UNAVAILABLE',
+          requestId: isDev ? requestId : undefined
         });
       } else {
+        console.error(`[${requestId}] Unknown AI service error`);
         return res.status(502).json({ 
-          error: "AI service error. Please try again in a moment." 
+          error: "AI service error. Please try again in a moment.",
+          code: 'AI_SERVICE_ERROR',
+          requestId: isDev ? requestId : undefined
         });
       }
     }
@@ -436,13 +502,28 @@ ${wantIG ? `[INSTAGRAM]\nSample Instagram caption with hashtags\n` : ""}${wantTW
     // Final check - if still empty, return error
     const hasAnyContent = instagram || twitter || linkedin || facebook || tiktok || youtube || pinterest;
     if (!hasAnyContent) {
-      console.error("CRITICAL: All content is still empty after fallback!");
-      return res.status(500).json({ error: "Content generation failed. Please try again." });
+      console.error(`[${requestId}] CRITICAL: All content is still empty after fallback!`);
+      return res.status(500).json({ 
+        error: "Content generation failed. Please try again.",
+        code: 'CONTENT_GENERATION_FAILED',
+        requestId: isDev ? requestId : undefined
+      });
     }
+
+    console.log(`[${requestId}] Success: Generated content for`, Object.keys({ instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest }).filter(k => ({ instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest })[k]).length, 'platforms');
 
     res.setHeader("Cache-Control", "no-store");
     return res.status(200).json({ instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest });
   } catch (err) {
-    return res.status(500).json({ error: err.message || "Server error" });
+    console.error(`[${requestId}] Unexpected server error:`, {
+      message: err.message,
+      stack: isDev ? err.stack : undefined
+    });
+    
+    return res.status(500).json({ 
+      error: "An unexpected error occurred. Please try again.",
+      code: 'INTERNAL_SERVER_ERROR',
+      requestId: isDev ? requestId : undefined
+    });
   }
 }
