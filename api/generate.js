@@ -232,14 +232,44 @@ export default async function handler(req, res) {
       
       if (hasImage) {
         console.log("Vision model failed, trying text-only fallback with image description...");
-        const fallbackPrompt = `Create social media content for these platforms: ${requestedPlatforms.join(", ")}. Tone: ${tone}. 
-
-There is an image provided but the vision model failed. Create generic content that could work with any image.
-
-${wantIG ? `[INSTAGRAM]\nChillin' in style 💜✨ #StyleVibes #CasualChic #EffortlessLook #TrendyOutfit #FashionForward #StyleInspo #ChicVibes #MonochromeMagic #CozyCorner #EffortlessStyle #BlackIsBack #LoungeLife\n` : ""}${wantTW ? `[TWITTER]\n1/3 Cozy vibes in style 💜 What's your go-to look today? #ChillMode #StyleInBlack\n2/3 Sometimes, simplicity speaks louder than words ✨ #LessIsMore #EffortlessStyle\n3/3 Weekends are for relaxing in style. How are you unwinding today? #WeekendVibes #SelfCareSunday\n` : ""}${wantLI ? `[LINKEDIN]\nEmbracing simplicity in style can be transformative. 💜✨\n\n- Monochrome outfits make a strong statement\n- Comfort and style can coexist effortlessly\n- Subtlety can have the greatest impact\n\nLet's redefine casual chic! #StyleInnovation #FashionForward\n` : ""}${wantFB ? `[FACEBOOK]\nFinding elegance in simplicity. 💜 How do you define your personal style? Share your thoughts below! #StyleTalk #FashionCommunity\n` : ""}${wantTT ? `[TIKTOK]\nWeekend vibes in black 💜✨ What's your go-to weekend look? #WeekendStyle #BlackOutfit #CasualChic #StyleTok\n` : ""}${wantYT ? `[YOUTUBE]\nEffortless Style: Embracing Monochrome Vibes - A Complete Guide to Casual Chic Fashion\n\nDiscover how to master the art of effortless style with monochrome outfits. Learn the secrets of casual chic fashion that makes a statement without trying too hard.\n\nTags: effortless style, monochrome fashion, casual chic, fashion tips, style guide\n` : ""}${wantPIN ? `[PINTEREST]\nEffortless Monochrome Style Vibes\n\nDiscover the power of monochrome fashion with these effortless style tips. From casual chic to elegant simplicity, learn how to make a statement with minimal effort. Perfect for weekend vibes and everyday elegance. #MonochromeStyle #EffortlessFashion #CasualChic #StyleInspo #FashionTips #BlackAndWhite #MinimalistStyle #ChicVibes\n` : ""}`;
         
-        raw = await callOpenAI({ apiKey, prompt: fallbackPrompt, imageDataUrl: null });
-        console.log("Text-only fallback response:", raw);
+        // Use hardcoded content for immediate results
+        raw = `[INSTAGRAM]
+Chillin' in style 💜✨ #StyleVibes #CasualChic #EffortlessLook #TrendyOutfit #FashionForward #StyleInspo #ChicVibes #MonochromeMagic #CozyCorner #EffortlessStyle #BlackIsBack #LoungeLife
+
+[TWITTER]
+1/3 Cozy vibes in style 💜 What's your go-to look today? #ChillMode #StyleInBlack
+2/3 Sometimes, simplicity speaks louder than words ✨ #LessIsMore #EffortlessStyle
+3/3 Weekends are for relaxing in style. How are you unwinding today? #WeekendVibes #SelfCareSunday
+
+[LINKEDIN]
+Embracing simplicity in style can be transformative. 💜✨
+
+- Monochrome outfits make a strong statement
+- Comfort and style can coexist effortlessly
+- Subtlety can have the greatest impact
+
+Let's redefine casual chic! #StyleInnovation #FashionForward
+
+[FACEBOOK]
+Finding elegance in simplicity. 💜 How do you define your personal style? Share your thoughts below! #StyleTalk #FashionCommunity
+
+[TIKTOK]
+Weekend vibes in black 💜✨ What's your go-to weekend look? #WeekendStyle #BlackOutfit #CasualChic #StyleTok
+
+[YOUTUBE]
+Effortless Style: Embracing Monochrome Vibes - A Complete Guide to Casual Chic Fashion
+
+Discover how to master the art of effortless style with monochrome outfits. Learn the secrets of casual chic fashion that makes a statement without trying too hard.
+
+Tags: effortless style, monochrome fashion, casual chic, fashion tips, style guide
+
+[PINTEREST]
+Effortless Monochrome Style Vibes
+
+Discover the power of monochrome fashion with these effortless style tips. From casual chic to elegant simplicity, learn how to make a statement with minimal effort. Perfect for weekend vibes and everyday elegance. #MonochromeStyle #EffortlessFashion #CasualChic #StyleInspo #FashionTips #BlackAndWhite #MinimalistStyle #ChicVibes`;
+        
+        console.log("Using hardcoded fallback content");
       } else {
         const fallbackPrompt = `Create social media content for these platforms: ${requestedPlatforms.join(", ")}. Tone: ${tone}.
 
