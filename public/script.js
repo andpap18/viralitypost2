@@ -111,16 +111,7 @@ if (imageInput) {
 function handleImageUpload() {
     const file = imageInput.files?.[0];
     
-    console.log("=== IMAGE UPLOAD TRACE ===");
-    console.log("File selected:", file ? {
-        name: file.name,
-        type: file.type,
-        size: file.size,
-        lastModified: file.lastModified
-    } : "No file");
-    
     if (!file) {
-        console.log("No file selected, hiding preview");
         hideImagePreview();
         updateSubmitButton();
         return;
@@ -128,10 +119,7 @@ function handleImageUpload() {
     
     // Validate file type
     const validTypes = ["image/png", "image/jpeg", "image/webp"];
-    console.log("Validating file type:", file.type, "Valid types:", validTypes);
-    
     if (!validTypes.includes(file.type)) {
-        console.error("Invalid file type:", file.type);
         showToast("Please upload a PNG, JPG, or WEBP image.", "error");
         imageInput.value = "";
         hideImagePreview();
@@ -140,19 +128,13 @@ function handleImageUpload() {
     }
     
     // Validate file size (5MB)
-    const maxSize = 5 * 1024 * 1024;
-    console.log("Validating file size:", file.size, "Max size:", maxSize);
-    
-    if (file.size > maxSize) {
-        console.error("File too large:", file.size);
+    if (file.size > 5 * 1024 * 1024) {
         showToast("Image size must be less than 5MB.", "error");
         imageInput.value = "";
         hideImagePreview();
         updateSubmitButton();
         return;
     }
-    
-    console.log("File validation passed");
     
     // Show preview
     const reader = new FileReader();
@@ -213,36 +195,18 @@ function updateResultCardsVisibility() {
 
 // Render content block
 function renderContentBlock(container, platform, content) {
-    console.log(`=== RENDER CONTENT BLOCK: ${platform} ===`);
-    console.log("Container:", container);
-    console.log("Content:", content);
-    console.log("Content length:", content?.length || 0);
-    
-    if (!container) {
-        console.error("Container not found for platform:", platform);
-        return;
-    }
-    
     if (!content || content.trim() === "") {
-        console.log("Content is empty, showing placeholder");
-        // Leave container empty so CSS ::before pseudo-element shows "No content generated"
         container.innerHTML = '<div class="result-content"></div>';
         return;
     }
     
-    console.log("Rendering content for platform:", platform);
     container.innerHTML = `
         <div class="result-content">${content}</div>
     `;
     
     // Add copy functionality
     const copyBtn = container.closest('.result-card').querySelector('.copy-btn');
-    if (copyBtn) {
-        copyBtn.onclick = () => copyToClipboard(content, platform);
-        console.log("Copy button updated for platform:", platform);
-    } else {
-        console.error("Copy button not found for platform:", platform);
-    }
+    copyBtn.onclick = () => copyToClipboard(content, platform);
 }
 
 // Form submission
@@ -259,29 +223,14 @@ form.addEventListener("submit", async (e) => {
     submitBtn.disabled = true;
     
     try {
-        console.log("=== FORM SUBMIT TRACE ===");
-        
         // Prepare image data
         let imageDataUrl = null;
         if (imageInput.files?.[0]) {
-            console.log("Processing image file:", {
-                name: imageInput.files[0].name,
-                type: imageInput.files[0].type,
-                size: imageInput.files[0].size
-            });
-            
             imageDataUrl = await new Promise((resolve) => {
                 const reader = new FileReader();
-                reader.onload = () => {
-                    const result = reader.result;
-                    console.log("Image converted to base64, length:", result?.length || 0);
-                    console.log("Base64 starts with:", result?.substring(0, 50) || "N/A");
-                    resolve(result);
-                };
+                reader.onload = () => resolve(reader.result);
                 reader.readAsDataURL(imageInput.files[0]);
             });
-        } else {
-            console.log("No image file selected");
         }
         
         // Get selected platforms
@@ -294,16 +243,10 @@ form.addEventListener("submit", async (e) => {
             sourceText: source.value.trim(),
             tone: toneSelect.value,
             outputs: selectedPlatforms,
-            imageDataUri: imageDataUrl  // Use canonical field name
+            imageDataUrl
         };
         
-        console.log("Request data structure:", {
-            sourceText: requestData.sourceText,
-            tone: requestData.tone,
-            outputs: requestData.outputs,
-            hasImageDataUri: !!requestData.imageDataUri,
-            imageDataUriLength: requestData.imageDataUri?.length || 0
-        });
+        console.log("Request data:", requestData);
         
         // Make API request
         console.log("Sending request to API...");
@@ -318,133 +261,52 @@ form.addEventListener("submit", async (e) => {
         console.log("Response status:", response.status);
         
         if (!response.ok) {
-            let errorMessage = `Server error: ${response.status}`;
-            let errorCode = 'UNKNOWN_ERROR';
-            
-            try {
-                const errorData = await response.json();
-                errorMessage = errorData.error || errorMessage;
-                errorCode = errorData.code || errorCode;
-                console.error("API Error (JSON):", {
-                    status: response.status,
-                    message: errorMessage,
-                    code: errorCode,
-                    requestId: errorData.requestId
-                });
-            } catch (jsonError) {
-                const errorText = await response.text();
-                errorMessage = errorText || errorMessage;
-                console.error("API Error (Text):", {
-                    status: response.status,
-                    message: errorMessage
-                });
-            }
-            
-            // Show specific error messages based on error code
-            if (errorCode === 'NO_PLATFORMS') {
-                errorMessage = "Please select at least one social media platform.";
-            } else if (errorCode === 'NO_CONTENT') {
-                errorMessage = "Please provide either text content or upload an image.";
-            } else if (errorCode === 'PARSE_ERROR' || response.status === 422) {
-                // Keep the specific error message from server
-            } else if (errorCode === 'AUTH_FAILED') {
-                errorMessage = "Service authentication failed. Please contact support.";
-            } else if (errorCode === 'RATE_LIMIT') {
-                errorMessage = "Too many requests. Please wait a moment and try again.";
-            } else if (errorCode === 'SERVICE_UNAVAILABLE') {
-                errorMessage = "Service temporarily unavailable. Please try again in a moment.";
-            }
-            
-            throw new Error(errorMessage);
+            const errorText = await response.text();
+            console.error("API Error:", errorText);
+            throw new Error(`Server error: ${response.status} - ${errorText}`);
         }
         
         const data = await response.json();
-        console.log("=== API RESPONSE TRACE ===");
-        console.log("Response status:", response.status);
-        console.log("Response headers:", Object.fromEntries(response.headers.entries()));
         console.log("Received data:", data);
         
         // Debug: Log each platform's content
-        console.log("Full API Response:", JSON.stringify(data, null, 2));
-        console.log("Selected platforms:", selectedPlatforms);
-        console.log("Instagram content:", data.instagram, "Length:", data.instagram?.length);
-        console.log("Twitter content:", data.twitter, "Length:", data.twitter?.length);
-        console.log("LinkedIn content:", data.linkedin, "Length:", data.linkedin?.length);
-        console.log("Facebook content:", data.facebook, "Length:", data.facebook?.length);
-        console.log("TikTok content:", data.tiktok, "Length:", data.tiktok?.length);
-        console.log("YouTube content:", data.youtube, "Length:", data.youtube?.length);
-        console.log("Pinterest content:", data.pinterest, "Length:", data.pinterest?.length);
+        console.log("Instagram content:", data.instagram);
+        console.log("Twitter content:", data.twitter);
+        console.log("LinkedIn content:", data.linkedin);
+        console.log("Facebook content:", data.facebook);
+        console.log("TikTok content:", data.tiktok);
+        console.log("YouTube content:", data.youtube);
+        console.log("Pinterest content:", data.pinterest);
         
-        // Check if all content is empty
-        const allEmpty = !data.instagram && !data.twitter && !data.linkedin && 
-                        !data.facebook && !data.tiktok && !data.youtube && !data.pinterest;
-        console.log("All content empty:", allEmpty);
-        
-        if (allEmpty) {
-            console.error("CRITICAL: All platform content is empty!");
-            if (imageInput.files && imageInput.files.length > 0) {
-                showToast("Image processed but no content returned. Please try with a different image or add some text.", "error");
-            } else {
-                showToast("Content generation failed. Please try again.", "error");
-            }
-            return;
-        }
-        
-        // First, hide all result cards
-        const allResultCards = document.querySelectorAll('.result-card');
-        allResultCards.forEach(card => {
-            card.style.display = 'none';
-        });
-        
-        // Then show and render content only for selected platforms
+        // Render results only for selected platforms
         if (selectedPlatforms.includes('instagram')) {
-            console.log("=== RENDERING INSTAGRAM ===");
-            console.log("Showing Instagram card, content:", data.instagram);
-            const card = document.getElementById("instagramCard");
-            if (card) {
-                card.style.display = 'block';
-                renderContentBlock(document.getElementById("outInstagram"), "Instagram", data.instagram);
-                console.log("Instagram card rendered successfully");
-            } else {
-                console.error("Instagram card element not found!");
-            }
+            renderContentBlock(document.getElementById("outInstagram"), "Instagram", data.instagram);
         }
         if (selectedPlatforms.includes('twitter')) {
-            const card = document.getElementById("twitterCard");
-            card.style.display = 'block';
             renderContentBlock(document.getElementById("outTwitter"), "Twitter", data.twitter);
         }
         if (selectedPlatforms.includes('linkedin')) {
-            const card = document.getElementById("linkedinCard");
-            card.style.display = 'block';
             renderContentBlock(document.getElementById("outLinkedIn"), "LinkedIn", data.linkedin);
         }
         if (selectedPlatforms.includes('facebook')) {
-            const card = document.getElementById("facebookCard");
-            card.style.display = 'block';
             renderContentBlock(document.getElementById("outFacebook"), "Facebook", data.facebook);
         }
         if (selectedPlatforms.includes('tiktok')) {
-            const card = document.getElementById("tiktokCard");
-            card.style.display = 'block';
             renderContentBlock(document.getElementById("outTikTok"), "TikTok", data.tiktok);
         }
         if (selectedPlatforms.includes('youtube')) {
-            const card = document.getElementById("youtubeCard");
-            card.style.display = 'block';
             renderContentBlock(document.getElementById("outYouTube"), "YouTube", data.youtube);
         }
         if (selectedPlatforms.includes('pinterest')) {
-            const card = document.getElementById("pinterestCard");
-            card.style.display = 'block';
             renderContentBlock(document.getElementById("outPinterest"), "Pinterest", data.pinterest);
         }
         
-        // Show results section only after all content is rendered
-        setTimeout(() => {
-            results.classList.remove("hidden");
-            results.scrollIntoView({ behavior: "smooth", block: "start" });
-        }, 100);
+        // Update visibility of result cards
+        updateResultCardsVisibility();
+        
+        // Show results section
+        results.classList.remove("hidden");
+        results.scrollIntoView({ behavior: "smooth", block: "start" });
         
         showToast("Content generated successfully!", "success");
         
@@ -492,20 +354,6 @@ document.addEventListener('DOMContentLoaded', () => {
     initializePricingToggle();
 });
 
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        e.preventDefault();
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            target.scrollIntoView({
-                behavior: 'smooth',
-                block: 'start'
-            });
-        }
-    });
-});
-
 // Pricing functionality
 function initializePricingToggle() {
     const toggle = document.getElementById('pricingToggle');
@@ -548,6 +396,20 @@ function buyTopup(credits) {
     // TODO: Redirect to Stripe Checkout for one-time payment
     // window.location.href = `/checkout/topup?credits=${credits}`;
 }
+
+// Smooth scrolling for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
+        }
+    });
+});
 
 // Add some interactive effects
 document.addEventListener('DOMContentLoaded', function() {
