@@ -1,12 +1,65 @@
-export const config = { runtime: "nodejs" };
+export const config = { 
+  runtime: "nodejs",
+  api: {
+    bodyParser: {
+      sizeLimit: '10mb',
+    },
+  }
+};
 
 const ALLOWED_ORIGINS = null;     // same-origin για MVP
 const MAX_IMAGE_SIZE = 5 * 1024 * 1024;
+const ALLOWED_MIME_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp'];
 
 function okOrigin(req) {
   if (!ALLOWED_ORIGINS) return true;
   const o = req.headers.origin;
   return ALLOWED_ORIGINS.includes(o);
+}
+
+// Parse data URI to extract mime type and base64 data
+function parseDataUri(dataUri) {
+  console.log("=== PARSING DATA URI ===");
+  console.log("Data URI length:", dataUri?.length || 0);
+  
+  if (!dataUri || typeof dataUri !== 'string') {
+    throw new Error('Invalid data URI format');
+  }
+  
+  const match = /^data:(image\/(png|jpeg|jpg|webp));base64,(.+)$/i.exec(dataUri);
+  if (!match) {
+    console.error("Invalid data URI format:", dataUri.substring(0, 100));
+    throw new Error('Invalid image format. Please upload a PNG, JPG, or WEBP image.');
+  }
+  
+  const [, mimeType, imageType, base64Data] = match;
+  console.log("Parsed mime type:", mimeType, "Base64 length:", base64Data.length);
+  
+  return { mimeType, base64Data };
+}
+
+// Validate image data
+function validateImageData(mimeType, base64Data) {
+  console.log("=== VALIDATING IMAGE DATA ===");
+  
+  // Check MIME type
+  if (!ALLOWED_MIME_TYPES.includes(mimeType.toLowerCase())) {
+    console.error("Invalid MIME type:", mimeType);
+    throw new Error(`Unsupported image type: ${mimeType}. Please use PNG, JPG, or WEBP.`);
+  }
+  
+  // Calculate and check size
+  const size = Math.ceil((base64Data.length * 3) / 4);
+  const sizeMB = (size / 1024 / 1024).toFixed(2);
+  console.log("Image size:", size, "bytes (", sizeMB, "MB)");
+  
+  if (size > MAX_IMAGE_SIZE) {
+    console.error("Image too large:", size, "bytes");
+    throw new Error(`Image is too large (${sizeMB}MB). Maximum size allowed is 5MB.`);
+  }
+  
+  console.log("Image validation passed");
+  return { size, sizeMB };
 }
 
 function buildPrompt({ sourceText = "", tone = "casual", wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN, hasImage }) {
@@ -19,11 +72,14 @@ function buildPrompt({ sourceText = "", tone = "casual", wantIG, wantTW, wantLI,
   if (wantYT) requestedPlatforms.push("YouTube");
   if (wantPIN) requestedPlatforms.push("Pinterest");
 
+  // If there's an image but no text, provide a default context
+  const effectiveSourceText = sourceText.trim() || (hasImage ? "Create engaging social media content based on this image" : "N/A");
+
   return `
 You are an expert social media copywriter.
 
 INPUT IDEA:
-"${sourceText || "N/A"}"
+"${effectiveSourceText}"
 
 TONE: ${tone}
 IMAGE_PROVIDED: ${hasImage ? "Yes - Analyze the provided image and create content that is directly relevant to what you see in the image" : "No - Focus purely on the text content"}
@@ -168,30 +224,52 @@ export default async function handler(req, res) {
 
   try {
     console.log("=== REQUEST PARSING ===");
+    console.log("Content-Type:", req.headers['content-type']);
     console.log("Raw body type:", typeof req.body);
     console.log("Raw body keys:", Object.keys(req.body || {}));
     
     // Parse request data with proper error handling
-    let sourceText, tone, outputs, imageDataUrl;
+    let sourceText, tone, outputs, imageData;
     
     try {
       const body = req.body || {};
       sourceText = body.sourceText || "";
       tone = body.tone || "casual";
       outputs = Array.isArray(body.outputs) ? body.outputs : [];
-      imageDataUrl = body.imageDataUrl || null;
+      
+      // Handle image data - support both data URI and multipart
+      const imageDataUrl = body.imageDataUrl || null;
+      let imageMimeType = null;
+      let imageBase64Data = null;
+      
+      if (imageDataUrl) {
+        console.log("Processing image data URI...");
+        const { mimeType, base64Data } = parseDataUri(imageDataUrl);
+        imageMimeType = mimeType;
+        imageBase64Data = base64Data;
+        
+        // Validate the parsed image data
+        validateImageData(imageMimeType, imageBase64Data);
+        
+        imageData = {
+          mimeType: imageMimeType,
+          base64Data: imageBase64Data,
+          dataUri: imageDataUrl
+        };
+      }
       
       console.log("Parsed request data:", {
         sourceText: sourceText ? `"${sourceText.substring(0, 50)}..."` : "empty",
         tone,
         outputs,
-        hasImageDataUrl: !!imageDataUrl,
-        imageDataUrlLength: imageDataUrl?.length || 0
+        hasImageData: !!imageData,
+        imageMimeType,
+        imageBase64Length: imageBase64Data?.length || 0
       });
     } catch (parseError) {
       console.error("Request parsing error:", parseError);
       return res.status(400).json({ 
-        error: "Invalid request format. Please check your data and try again." 
+        error: parseError.message || "Invalid request format. Please check your data and try again." 
       });
     }
 
@@ -211,48 +289,8 @@ export default async function handler(req, res) {
       return res.status(400).json({ error:"Select at least one output" });
     }
 
-    // Image processing and validation
-    let hasImage = false;
-    if (imageDataUrl) {
-      console.log("=== IMAGE VALIDATION ===");
-      console.log("Image data URL received, length:", imageDataUrl.length);
-      console.log("Image data URL starts with:", imageDataUrl.substring(0, 50));
-      
-      hasImage = true;
-      
-      // Validate data URL format
-      if (typeof imageDataUrl !== 'string') {
-        console.error("Invalid image data type:", typeof imageDataUrl);
-        return res.status(400).json({ 
-          error: "Invalid image format. Please upload a valid image file." 
-        });
-      }
-      
-      // Extract and validate MIME type and base64 data
-      const dataUrlMatch = /^data:(image\/(png|jpeg|jpg|webp));base64,(.+)$/i.exec(imageDataUrl);
-      if (!dataUrlMatch) {
-        console.error("Invalid data URL format:", imageDataUrl.substring(0, 100));
-        return res.status(400).json({ 
-          error: "Invalid image format. Please upload a PNG, JPG, or WEBP image." 
-        });
-      }
-      
-      const [, mimeType, imageType, base64Data] = dataUrlMatch;
-      console.log("Validated image type:", mimeType, "Base64 length:", base64Data.length);
-      
-      // Calculate actual file size from base64
-      const size = Math.ceil((base64Data.length * 3) / 4);
-      console.log("Calculated image size:", size, "bytes (", (size / 1024 / 1024).toFixed(2), "MB)");
-      
-      if (size > MAX_IMAGE_SIZE) {
-        console.error("Image too large:", size, "bytes");
-        return res.status(400).json({ 
-          error: `Image is too large (${(size / 1024 / 1024).toFixed(1)}MB). Maximum size allowed is 5MB.` 
-        });
-      }
-      
-      console.log("Image validation passed successfully");
-    }
+    // Determine if we have image data
+    const hasImage = !!imageData;
 
     const prompt = buildPrompt({ sourceText, tone, wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN, hasImage });
     console.log("Generated prompt:", prompt);
@@ -263,16 +301,41 @@ export default async function handler(req, res) {
     console.log("Image data URL length:", imageDataUrl?.length || 0);
     
     console.log("=== CALLING OPENAI VISION MODEL ===");
+    console.log("Request ID:", Date.now()); // Temporary diagnostic ID
+    console.log("Input kind:", imageData ? "data-URI" : "text-only");
+    console.log("Image mime type:", imageData?.mimeType || "N/A");
+    console.log("Image size:", imageData ? `${(imageData.base64Data.length * 3 / 4 / 1024 / 1024).toFixed(2)}MB` : "N/A");
+    
     let raw;
     try {
+      // Use the original data URI for the vision model call
+      const imageDataUrl = imageData?.dataUri || null;
+      console.log("Calling OpenAI with image:", !!imageDataUrl);
+      
       raw = await callOpenAI({ apiKey, prompt, imageDataUrl });
       console.log("Raw AI response length:", raw?.length || 0);
       console.log("Raw AI response preview:", raw?.substring(0, 200) || "Empty response");
     } catch (aiError) {
       console.error("OpenAI API call failed:", aiError.message);
-      return res.status(502).json({ 
-        error: "AI service temporarily unavailable. Please try again in a moment." 
-      });
+      
+      // Map OpenAI errors to appropriate HTTP status codes
+      if (aiError.message.includes('Invalid API key') || aiError.message.includes('unauthorized')) {
+        return res.status(401).json({ 
+          error: "AI service authentication failed. Please contact support." 
+        });
+      } else if (aiError.message.includes('rate limit') || aiError.message.includes('quota')) {
+        return res.status(429).json({ 
+          error: "AI service rate limit exceeded. Please try again in a moment." 
+        });
+      } else if (aiError.message.includes('timeout') || aiError.message.includes('network')) {
+        return res.status(503).json({ 
+          error: "AI service temporarily unavailable. Please try again in a moment." 
+        });
+      } else {
+        return res.status(502).json({ 
+          error: "AI service error. Please try again in a moment." 
+        });
+      }
     }
     
     // If raw response is empty, try with a simpler prompt

@@ -355,7 +355,11 @@ form.addEventListener("submit", async (e) => {
         
         if (allEmpty) {
             console.error("CRITICAL: All platform content is empty!");
-            showToast("Image processed but no content returned. Please try with a different image or add some text.", "error");
+            if (imageInput.files && imageInput.files.length > 0) {
+                showToast("Image processed but no content returned. Please try with a different image or add some text.", "error");
+            } else {
+                showToast("Content generation failed. Please try again.", "error");
+            }
             return;
         }
         
