@@ -31,7 +31,9 @@ IMAGE_PROVIDED: ${hasImage ? "Yes - Analyze the provided image and create conten
 IMPORTANT: Generate content ONLY for the requested platforms: ${requestedPlatforms.join(", ")}. Do NOT generate content for any other platforms.
 
 ${hasImage ? `
-IMAGE ANALYSIS: Look carefully at the provided image and create social media content that is directly related to what you see. Reference specific visual elements, objects, people, scenes, or concepts visible in the image. Make the content feel authentic and connected to the visual content.` : ""}
+IMAGE ANALYSIS: Look carefully at the provided image and create social media content that is directly related to what you see. Reference specific visual elements, objects, people, scenes, or concepts visible in the image. Make the content feel authentic and connected to the visual content.
+
+If you cannot see the image clearly, create generic social media content about the image topic.` : ""}
 
 ${wantIG ? `
 For Instagram: Create 1 concise caption + 6–12 smart hashtags (no banned ones).` : ""}${wantTW ? `
@@ -60,6 +62,8 @@ ${
 }
 
 CRITICAL: Do not add any other text, explanations, or content for platforms not requested.
+
+If you cannot generate content for any reason, respond with "ERROR: Unable to generate content" for each requested platform.
   `.trim();
 }
 
@@ -93,6 +97,10 @@ async function callOpenAI({ apiKey, prompt, imageDataUrl = null }) {
     });
   }
 
+  console.log("Calling OpenAI API with model:", imageDataUrl ? "gpt-4o" : "gpt-4o-mini");
+  console.log("Messages count:", messages.length);
+  console.log("First message content length:", messages[0]?.content?.length || 0);
+  
   const resp = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
     headers: { "Content-Type":"application/json", "Authorization":`Bearer ${apiKey}` },
@@ -103,12 +111,16 @@ async function callOpenAI({ apiKey, prompt, imageDataUrl = null }) {
     })
   });
   
+  console.log("OpenAI response status:", resp.status);
+  
   if (!resp.ok) {
     const errorData = await resp.json().catch(() => ({}));
+    console.error("OpenAI API error:", errorData);
     throw new Error(`OpenAI error: ${resp.status} - ${errorData.error?.message || 'Unknown error'}`);
   }
   
   const data = await resp.json();
+  console.log("OpenAI response data:", JSON.stringify(data, null, 2));
   return data.choices?.[0]?.message?.content || "";
 }
 
@@ -138,6 +150,10 @@ export default async function handler(req, res) {
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) return res.status(500).json({ error:"Missing OPENAI_API_KEY" });
+  
+  console.log("API Key exists:", !!apiKey);
+  console.log("API Key length:", apiKey?.length || 0);
+  console.log("API Key starts with:", apiKey?.substring(0, 10) || "N/A");
 
   try {
     const { sourceText, tone, outputs, imageDataUrl } = req.body || {};
@@ -168,8 +184,14 @@ export default async function handler(req, res) {
     const prompt = buildPrompt({ sourceText, tone, wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN, hasImage });
     console.log("Generated prompt:", prompt);
     console.log("Platform flags:", { wantIG, wantTW, wantLI, wantFB, wantTT, wantYT, wantPIN });
+    console.log("Source text:", sourceText);
+    console.log("Tone:", tone);
+    console.log("Has image:", hasImage);
+    console.log("Image data URL length:", imageDataUrl?.length || 0);
+    
     const raw = await callOpenAI({ apiKey, prompt, imageDataUrl });
     console.log("Raw AI response:", raw);
+    console.log("Raw AI response length:", raw?.length || 0);
     const { instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest } = parseOutputs(raw);
     console.log("Parsed outputs:", { instagram, twitter, linkedin, facebook, tiktok, youtube, pinterest });
 
