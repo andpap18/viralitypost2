@@ -88,12 +88,13 @@ body {
 }
 
 .nav-container {
-    max-width: 1200px;
+    max-width: 1280px;
     margin: 0 auto;
-    padding: 0 var(--space-lg);
+    padding: 0 24px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    width: 100%;
 }
 
 .nav-brand {
@@ -104,6 +105,8 @@ body {
     font-weight: 700;
     color: var(--text-primary);
     text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .nav-brand i {
@@ -113,7 +116,9 @@ body {
 
 .nav-links {
     display: flex;
-    gap: var(--space-xl);
+    gap: 32px;
+    align-items: center;
+    flex-shrink: 0;
 }
 
 .nav-link {
@@ -122,6 +127,8 @@ body {
     font-weight: 500;
     transition: var(--transition-fast);
     position: relative;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .nav-link:hover {
