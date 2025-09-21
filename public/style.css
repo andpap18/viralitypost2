@@ -27,6 +27,10 @@
     --text-secondary: #e2e8f0;
     --text-muted: #94a3b8;
     
+    /* Navbar heights */
+    --nav-h-mobile: 64px;
+    --nav-h-desktop: 72px;
+    
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
     --gradient-secondary: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
@@ -78,7 +82,9 @@ body {
     backdrop-filter: blur(20px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
     z-index: 9999;
-    padding: var(--space-md) 0;
+    height: var(--nav-h-desktop);
+    display: flex;
+    align-items: center;
 }
 
 .nav-container {
@@ -146,8 +152,7 @@ body {
                 radial-gradient(ellipse at bottom, rgba(139, 92, 246, 0.1) 0%, transparent 50%);
     position: relative;
     overflow: hidden;
-    /* Remove default padding-top since we're using inline style */
-    padding-top: 0;
+    padding-top: var(--nav-h-desktop);
 }
 
 .hero-container {
@@ -1567,11 +1572,16 @@ body.menu-open {
         background: rgba(15, 15, 35, 0.98);
         backdrop-filter: blur(20px);
         z-index: 9999;
+        height: var(--nav-h-mobile);
         transition: box-shadow 0.3s ease;
     }
     
     .navbar.scrolled {
         box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    }
+    
+    .hero {
+        padding-top: calc(var(--nav-h-mobile) + 12px + env(safe-area-inset-top));
     }
 }
 
