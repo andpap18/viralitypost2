@@ -12,7 +12,7 @@
 <body>
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="nav-container">
+        <div class="container nav-container">
             <div class="nav-brand">
                 <i class="fas fa-rocket"></i>
                 <span>ViralityPost</span>
@@ -28,10 +28,10 @@
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero" style="padding-top: calc(4rem + env(safe-area-inset-top))">
-        <div class="hero-container">
+    <section class="hero section" style="padding-top: calc(4rem + env(safe-area-inset-top))">
+        <div class="container">
             <div class="hero-content">
-                <h1 class="hero-title" style="font-size: clamp(1.75rem, 8vw, 3.5rem); line-height: 1.1;">
+                <h1 class="hero-title h1">
                     AI Social Media Content Generator for 
                     <span class="gradient-text">Instagram & TikTok</span>
                 </h1>
@@ -55,7 +55,7 @@
                 </div>
                 
                 <div class="hero-cta">
-                    <a href="#generator" class="btn btn-primary btn-large cta-responsive">
+                    <a href="#generator" class="btn btn-primary btn-xl btn-full">
                         <i class="fas fa-rocket"></i>
                         <span>Start Generating Free</span>
                     </a>
@@ -99,9 +99,9 @@
     <main class="main-content">
         <div class="container">
             <!-- Generator Form -->
-            <section class="generator-section">
+            <section class="generator-section section">
                 <div class="section-header">
-                    <h2>Create Your Content</h2>
+                    <h2 class="h2">Create Your Content</h2>
                     <p>Enter your idea or upload an image to generate viral social media content</p>
                 </div>
 
@@ -146,7 +146,7 @@
                                 <i class="fas fa-share-alt"></i>
                                 Target Platforms
                             </label>
-                            <div class="platform-selector platform-grid-responsive">
+                            <div class="platform-selector grid grid-cols-4">
                                 <label class="platform-option">
                                     <input type="checkbox" value="instagram" checked>
                                     <span class="platform-icon">
@@ -224,14 +224,14 @@
 
                     <!-- Action Buttons -->
                     <div class="form-actions">
-                        <button type="submit" id="submitBtn" class="btn btn-primary" disabled>
+                        <button type="submit" id="submitBtn" class="btn btn-primary btn-xl btn-full" disabled>
                             <i class="fas fa-magic"></i>
                             <span>Generate Content</span>
                             <div class="btn-loading">
                                 <i class="fas fa-spinner fa-spin"></i>
                             </div>
                         </button>
-                        <button type="button" id="resetBtn" class="btn btn-secondary">
+                        <button type="button" id="resetBtn" class="btn btn-secondary btn-lg btn-full">
                             <i class="fas fa-refresh"></i>
                             Clear All
                         </button>
@@ -241,9 +241,9 @@
             </section>
 
             <!-- Results Section -->
-            <section id="results" class="results-section hidden">
+            <section id="results" class="results-section section hidden">
                 <div class="section-header">
-                    <h2>Generated Content</h2>
+                    <h2 class="h2">Generated Content</h2>
                     <p>Your AI-generated social media content is ready!</p>
                 </div>
 
@@ -351,14 +351,14 @@
     </main>
 
     <!-- How It Works Section -->
-    <section id="how-it-works" class="how-it-works-section">
+    <section id="how-it-works" class="how-it-works-section section">
         <div class="container">
             <div class="section-header">
-                <h2>How It Works</h2>
+                <h2 class="h2">How It Works</h2>
                 <p>Transform your ideas into viral content in just 4 simple steps</p>
             </div>
             
-            <div class="steps-container">
+            <div class="grid grid-cols-4">
                 <div class="step-card" data-step="1">
                     <div class="step-number">01</div>
                     <div class="step-icon">
@@ -416,14 +416,14 @@
     </section>
 
     <!-- Demo Preview Section -->
-    <section class="demo-section">
+    <section class="demo-section section">
         <div class="container">
             <div class="section-header">
-                <h2>See It In Action</h2>
+                <h2 class="h2">See It In Action</h2>
                 <p>Real examples of AI-generated content for different platforms</p>
             </div>
             
-            <div class="demo-grid">
+            <div class="grid grid-cols-3">
                 <div class="demo-card instagram-demo">
                     <div class="demo-header">
                         <i class="fab fa-instagram"></i>
@@ -492,14 +492,14 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
     </section>
 
     <!-- Social Proof Section -->
-    <section class="social-proof-section">
+    <section class="social-proof-section section">
         <div class="container">
             <div class="section-header">
-                <h2>Trusted by 10,000+ Creators</h2>
+                <h2 class="h2">Trusted by 10,000+ Creators</h2>
                 <p>Join thousands of content creators and businesses growing their social media presence</p>
             </div>
             
-            <div class="testimonials-grid">
+            <div class="grid grid-cols-3">
                 <div class="testimonial-card">
                     <div class="testimonial-content">
                         <p>"This tool saved me 5 hours per week! The AI-generated content performs better than my manual posts."</p>
@@ -542,7 +542,7 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
 
             <div class="brands-logos">
                 <h3>Used by teams at:</h3>
-                <div class="logos-grid">
+                <div class="grid grid-cols-6">
                     <div class="logo-item">TechCorp</div>
                     <div class="logo-item">StartupXYZ</div>
                     <div class="logo-item">DigitalAgency</div>
@@ -554,10 +554,10 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
     </section>
 
     <!-- Pricing Section -->
-    <section id="pricing" class="pricing-section">
+    <section id="pricing" class="pricing-section section">
         <div class="container">
             <div class="section-header">
-                <h2>Simple, Transparent Pricing</h2>
+                <h2 class="h2">Simple, Transparent Pricing</h2>
                 <p>Choose the plan that fits your content creation needs</p>
             </div>
             
@@ -573,7 +573,7 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
                 </span>
             </div>
             
-            <div class="pricing-grid">
+            <div class="grid grid-cols-3">
                 <!-- Starter Plan -->
                 <div class="pricing-card">
                     <div class="plan-header">
@@ -608,7 +608,7 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
                             <span>Cancel anytime</span>
                         </div>
                     </div>
-                    <button class="btn btn-primary plan-btn" onclick="selectPlan('starter')">
+                    <button class="btn btn-primary btn-xl btn-full" onclick="selectPlan('starter')">
                         Start Free Trial
                     </button>
                 </div>
@@ -652,7 +652,7 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
                             <span>Analytics dashboard</span>
                         </div>
                     </div>
-                    <button class="btn btn-primary plan-btn" onclick="selectPlan('pro')">
+                    <button class="btn btn-primary btn-xl btn-full" onclick="selectPlan('pro')">
                         Start Free Trial
                     </button>
                 </div>
@@ -699,7 +699,7 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
                             <span>White-label options</span>
                         </div>
                     </div>
-                    <button class="btn btn-primary plan-btn" onclick="selectPlan('business')">
+                    <button class="btn btn-primary btn-xl btn-full" onclick="selectPlan('business')">
                         Start Free Trial
                     </button>
                 </div>
@@ -709,17 +709,17 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
             <div class="topups-section">
                 <h3>Need Extra Credits?</h3>
                 <p>Buy additional credits anytime without changing your plan</p>
-                <div class="topups-grid">
+                <div class="grid grid-cols-2">
                     <div class="topup-card">
                         <div class="topup-amount">100 Credits</div>
                         <div class="topup-price">€10</div>
-                        <button class="btn btn-secondary" onclick="buyTopup(100)">Buy Now</button>
+                        <button class="btn btn-secondary btn-lg btn-full" onclick="buyTopup(100)">Buy Now</button>
                     </div>
                     <div class="topup-card">
                         <div class="topup-amount">500 Credits</div>
                         <div class="topup-price">€39</div>
                         <div class="topup-savings">Save €11</div>
-                        <button class="btn btn-secondary" onclick="buyTopup(500)">Buy Now</button>
+                        <button class="btn btn-secondary btn-lg btn-full" onclick="buyTopup(500)">Buy Now</button>
                     </div>
                 </div>
             </div>
@@ -727,13 +727,13 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="features-section">
+    <section id="features" class="features-section section">
         <div class="container">
             <div class="section-header">
-                <h2>Why Choose ViralityPost?</h2>
+                <h2 class="h2">Why Choose ViralityPost?</h2>
                 <p>Powerful features that make content creation effortless</p>
             </div>
-            <div class="features-grid">
+            <div class="grid grid-cols-3">
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-brain"></i>
