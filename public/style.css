@@ -297,18 +297,9 @@ body {
     gap: var(--space-sm);
     backdrop-filter: blur(20px);
     box-shadow: var(--shadow-xl);
+    animation: float 6s ease-in-out infinite;
     text-align: center;
     min-width: 140px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, z-index 0.3s ease;
-    z-index: 1;
-}
-
-.floating-card:hover,
-.floating-card:focus {
-    animation-play-state: paused;
-    transform: translateY(-10px);
-    box-shadow: var(--shadow-xl);
-    z-index: 10;
 }
 
 .floating-card i {
@@ -328,7 +319,6 @@ body {
 .card-1 {
     top: 15%;
     left: 8%;
-    animation: float-safe-1 4s ease-in-out infinite;
     animation-delay: 0s;
 }
 
@@ -339,7 +329,6 @@ body {
 .card-2 {
     top: 15%;
     right: 8%;
-    animation: float-safe-2 5s ease-in-out infinite;
     animation-delay: 1.2s;
 }
 
@@ -350,7 +339,6 @@ body {
 .card-3 {
     top: 25%;
     left: 5%;
-    animation: float-safe-3 4.5s ease-in-out infinite;
     animation-delay: 2.8s;
 }
 
@@ -361,7 +349,6 @@ body {
 .card-4 {
     top: 25%;
     right: 5%;
-    animation: float-safe-4 5.5s ease-in-out infinite;
     animation-delay: 3.5s;
 }
 
@@ -372,7 +359,6 @@ body {
 .card-5 {
     bottom: 15%;
     left: 8%;
-    animation: float-safe-5 4.2s ease-in-out infinite;
     animation-delay: 4.2s;
 }
 
@@ -383,7 +369,6 @@ body {
 .card-6 {
     bottom: 15%;
     right: 8%;
-    animation: float-safe-6 5.8s ease-in-out infinite;
     animation-delay: 5.1s;
 }
 
@@ -394,7 +379,6 @@ body {
 .card-7 {
     top: 20%;
     left: calc(50% - 100px);
-    animation: float-safe-7 6s ease-in-out infinite;
     animation-delay: 2.1s;
 }
 
@@ -413,85 +397,130 @@ body {
 
 @keyframes float {
     0%, 100% { 
-        transform: translateY(0px); 
+        transform: translateY(0px) translateX(0px); 
+    }
+    25% { 
+        transform: translateY(-15px) translateX(8px); 
     }
     50% { 
-        transform: translateY(-8px); 
+        transform: translateY(-30px) translateX(-5px); 
+    }
+    75% { 
+        transform: translateY(-15px) translateX(-8px); 
     }
 }
 
-@keyframes float-safe-1 {
+@keyframes float-mobile {
     0%, 100% { 
         transform: translateY(0px); 
     }
     50% { 
-        transform: translateY(-6px); 
+        transform: translateY(-15px); 
     }
 }
 
-@keyframes float-safe-2 {
+@keyframes float-mobile-1 {
     0%, 100% { 
-        transform: translateY(0px); 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(8px, -10px); 
     }
     50% { 
-        transform: translateY(-4px); 
+        transform: translate(-5px, -15px); 
+    }
+    75% { 
+        transform: translate(-8px, -5px); 
     }
 }
 
-@keyframes float-safe-3 {
+@keyframes float-mobile-2 {
     0%, 100% { 
-        transform: translateY(0px); 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(-10px, 8px); 
     }
     50% { 
-        transform: translateY(-5px); 
+        transform: translate(-15px, -5px); 
+    }
+    75% { 
+        transform: translate(-8px, 10px); 
     }
 }
 
-@keyframes float-safe-4 {
+@keyframes float-mobile-3 {
     0%, 100% { 
-        transform: translateY(0px); 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(12px, 5px); 
     }
     50% { 
-        transform: translateY(-4px); 
+        transform: translate(8px, -12px); 
+    }
+    75% { 
+        transform: translate(-6px, -8px); 
     }
 }
 
-@keyframes float-safe-5 {
+@keyframes float-mobile-4 {
     0%, 100% { 
-        transform: translateY(0px); 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(-6px, -12px); 
     }
     50% { 
-        transform: translateY(-6px); 
+        transform: translate(10px, -8px); 
+    }
+    75% { 
+        transform: translate(8px, 6px); 
     }
 }
 
-@keyframes float-safe-6 {
+@keyframes float-mobile-5 {
     0%, 100% { 
-        transform: translateY(0px); 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(5px, 10px); 
     }
     50% { 
-        transform: translateY(-5px); 
+        transform: translate(-12px, 8px); 
+    }
+    75% { 
+        transform: translate(-8px, -10px); 
     }
 }
 
-@keyframes float-safe-7 {
+@keyframes float-mobile-6 {
     0%, 100% { 
-        transform: translateY(0px); 
+        transform: translate(0px, 0px); 
+    }
+    25% { 
+        transform: translate(-8px, -8px); 
     }
     50% { 
-        transform: translateY(-3px); 
+        transform: translate(6px, -10px); 
+    }
+    75% { 
+        transform: translate(12px, 5px); 
     }
 }
 
-/* Accessibility: Respect user's motion preferences */
-@media (prefers-reduced-motion: reduce) {
-    .floating-card {
-        animation: none !important;
+@keyframes float-mobile-7 {
+    0%, 100% { 
+        transform: translate(0px, 0px); 
     }
-    
-    .floating-card:hover,
-    .floating-card:focus {
-        transform: translateY(-5px);
+    25% { 
+        transform: translate(-10px, 6px); 
+    }
+    50% { 
+        transform: translate(8px, 12px); 
+    }
+    75% { 
+        transform: translate(-5px, -6px); 
     }
 }
 
@@ -1523,38 +1552,38 @@ body {
     .card-1 { 
         top: 12%; 
         left: 5%; 
-        animation: float-safe-1 6s ease-in-out infinite;
+        animation: float-mobile-1 7s ease-in-out infinite;
     }
     .card-2 { 
         top: 12%; 
         right: 5%; 
-        animation: float-safe-2 7s ease-in-out infinite;
+        animation: float-mobile-2 8s ease-in-out infinite;
     }
     .card-3 { 
         top: 28%; 
         left: 5%; 
-        animation: float-safe-3 6.5s ease-in-out infinite;
+        animation: float-mobile-3 6s ease-in-out infinite;
     }
     .card-4 { 
         top: 28%; 
         right: 5%; 
-        animation: float-safe-4 7.5s ease-in-out infinite;
+        animation: float-mobile-4 9s ease-in-out infinite;
     }
     .card-5 { 
         bottom: 12%; 
         left: 5%; 
-        animation: float-safe-5 6.8s ease-in-out infinite;
+        animation: float-mobile-5 7.5s ease-in-out infinite;
     }
     .card-6 { 
         bottom: 12%; 
         right: 5%; 
-        animation: float-safe-6 7.2s ease-in-out infinite;
+        animation: float-mobile-6 6.5s ease-in-out infinite;
     }
     .card-7 { 
         top: 20%; 
         left: 50%; 
         transform: translateX(-50%);
-        animation: float-safe-7 8s ease-in-out infinite;
+        animation: float-mobile-7 8.5s ease-in-out infinite;
     }
 }
 
