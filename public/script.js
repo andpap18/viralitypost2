@@ -359,6 +359,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const mobileMenu = document.querySelector('.mobile-menu');
     const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
     const body = document.body;
+    const navbar = document.querySelector('.navbar');
     
     let isMenuOpen = false;
     
@@ -424,6 +425,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
+    
+    // Mobile navbar scroll shadow effect
+    function handleScroll() {
+        if (window.innerWidth <= 768) {
+            const scrollY = window.scrollY;
+            if (scrollY > 10) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        } else {
+            // Remove scrolled class on desktop
+            navbar.classList.remove('scrolled');
+        }
+    }
+    
+    // Add scroll listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Check on resize
+    window.addEventListener('resize', handleScroll);
 });
 
 // Smooth scrolling for navigation links

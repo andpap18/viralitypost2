@@ -1557,6 +1557,21 @@ body.menu-open {
     overflow: hidden;
 }
 
+/* Mobile sticky navbar with scroll shadow */
+@media (max-width: 768px) {
+    .navbar {
+        position: sticky;
+        top: 0;
+        background: rgba(15, 15, 35, 0.98);
+        backdrop-filter: blur(20px);
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .navbar.scrolled {
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.3);
+    }
+}
+
 @media (max-width: 768px) {
     .nav-links {
         display: none;
