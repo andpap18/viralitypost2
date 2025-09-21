@@ -353,6 +353,79 @@ document.addEventListener('DOMContentLoaded', () => {
     updateResultCardsVisibility();
 });
 
+// Mobile Menu Functionality
+document.addEventListener('DOMContentLoaded', function() {
+    const hamburger = document.querySelector('.hamburger');
+    const mobileMenu = document.querySelector('.mobile-menu');
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    const body = document.body;
+    
+    let isMenuOpen = false;
+    
+    function toggleMenu() {
+        isMenuOpen = !isMenuOpen;
+        
+        hamburger.setAttribute('aria-expanded', isMenuOpen);
+        
+        if (isMenuOpen) {
+            mobileMenu.classList.add('open');
+            body.classList.add('menu-open');
+            // Focus trap: focus first link when menu opens
+            setTimeout(() => {
+                mobileNavLinks[0].focus();
+            }, 100);
+        } else {
+            mobileMenu.classList.remove('open');
+            body.classList.remove('menu-open');
+        }
+    }
+    
+    function closeMenu() {
+        if (isMenuOpen) {
+            toggleMenu();
+        }
+    }
+    
+    // Hamburger click
+    hamburger.addEventListener('click', toggleMenu);
+    
+    // Close menu when clicking on mobile nav links
+    mobileNavLinks.forEach(link => {
+        link.addEventListener('click', closeMenu);
+    });
+    
+    // Close menu when clicking outside
+    mobileMenu.addEventListener('click', function(e) {
+        if (e.target === mobileMenu) {
+            closeMenu();
+        }
+    });
+    
+    // Close menu with ESC key
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape' && isMenuOpen) {
+            closeMenu();
+        }
+    });
+    
+    // Focus trap for mobile menu
+    mobileNavLinks.forEach((link, index) => {
+        link.addEventListener('keydown', function(e) {
+            if (e.key === 'Tab') {
+                if (e.shiftKey && index === 0) {
+                    // Shift+Tab on first link: focus last link
+                    e.preventDefault();
+                    mobileNavLinks[mobileNavLinks.length - 1].focus();
+                } else if (!e.shiftKey && index === mobileNavLinks.length - 1) {
+                    // Tab on last link: focus first link
+                    e.preventDefault();
+                    mobileNavLinks[0].focus();
+                }
+            }
+        });
+    });
+});
+
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
