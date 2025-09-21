@@ -221,6 +221,9 @@ body {
 .hero-cta {
     margin-top: var(--space-2xl);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .btn-large {
@@ -257,6 +260,12 @@ body {
         width: auto;
         max-width: none;
     }
+}
+
+/* CTA Subtext alignment */
+.hero-cta .cta-subtext {
+    margin-top: var(--space-md);
+    text-align: center;
 }
 
 /* Hero Visual */
