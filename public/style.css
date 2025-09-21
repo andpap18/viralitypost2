@@ -317,8 +317,8 @@ body {
 }
 
 .card-1 {
-    top: 5%;
-    left: 3%;
+    top: 15%;
+    left: 8%;
     animation-delay: 0s;
 }
 
@@ -327,8 +327,8 @@ body {
 }
 
 .card-2 {
-    top: 5%;
-    right: 3%;
+    top: 15%;
+    right: 8%;
     animation-delay: 1.2s;
 }
 
@@ -337,8 +337,8 @@ body {
 }
 
 .card-3 {
-    top: 35%;
-    left: 2%;
+    top: 25%;
+    left: 5%;
     animation-delay: 2.8s;
 }
 
@@ -347,8 +347,8 @@ body {
 }
 
 .card-4 {
-    top: 35%;
-    right: 2%;
+    top: 25%;
+    right: 5%;
     animation-delay: 3.5s;
 }
 
@@ -357,8 +357,8 @@ body {
 }
 
 .card-5 {
-    bottom: 8%;
-    left: 5%;
+    bottom: 15%;
+    left: 8%;
     animation-delay: 4.2s;
 }
 
@@ -367,8 +367,8 @@ body {
 }
 
 .card-6 {
-    bottom: 8%;
-    right: 5%;
+    bottom: 15%;
+    right: 8%;
     animation-delay: 5.1s;
 }
 
@@ -1549,32 +1549,32 @@ body {
     
     /* Mobile-specific card positioning with unique animations */
     .card-1 { 
-        top: 5%; 
-        left: 3%; 
+        top: 12%; 
+        left: 5%; 
         animation: float-mobile-1 7s ease-in-out infinite;
     }
     .card-2 { 
-        top: 5%; 
-        right: 3%; 
+        top: 12%; 
+        right: 5%; 
         animation: float-mobile-2 8s ease-in-out infinite;
     }
     .card-3 { 
-        top: 35%; 
-        left: 2%; 
+        top: 28%; 
+        left: 5%; 
         animation: float-mobile-3 6s ease-in-out infinite;
     }
     .card-4 { 
-        top: 35%; 
-        right: 2%; 
+        top: 28%; 
+        right: 5%; 
         animation: float-mobile-4 9s ease-in-out infinite;
     }
     .card-5 { 
-        bottom: 8%; 
+        bottom: 12%; 
         left: 5%; 
         animation: float-mobile-5 7.5s ease-in-out infinite;
     }
     .card-6 { 
-        bottom: 8%; 
+        bottom: 12%; 
         right: 5%; 
         animation: float-mobile-6 6.5s ease-in-out infinite;
     }
