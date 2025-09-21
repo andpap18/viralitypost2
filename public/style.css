@@ -317,8 +317,8 @@ body {
 }
 
 .card-1 {
-    top: 10%;
-    left: 8%;
+    top: 20%;
+    left: calc(50% - 100px);
     animation-delay: 0s;
 }
 
@@ -377,8 +377,8 @@ body {
 }
 
 .card-7 {
-    top: 20%;
-    left: calc(50% - 100px);
+    top: 10%;
+    left: 8%;
     animation-delay: 2.1s;
 }
 
@@ -1550,8 +1550,9 @@ body {
     
     /* Mobile-specific card positioning with unique animations */
     .card-1 { 
-        top: 8%; 
-        left: 5%; 
+        top: 20%; 
+        left: 50%; 
+        transform: translateX(-50%);
         animation: float-mobile-1 7s ease-in-out infinite;
     }
     .card-2 { 
@@ -1580,9 +1581,8 @@ body {
         animation: float-mobile-6 6.5s ease-in-out infinite;
     }
     .card-7 { 
-        top: 20%; 
-        left: 50%; 
-        transform: translateX(-50%);
+        top: 8%; 
+        left: 5%; 
         animation: float-mobile-7 8.5s ease-in-out infinite;
     }
 }
