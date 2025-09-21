@@ -351,51 +351,7 @@ updateSubmitButton();
 // Initialize result cards visibility after DOM is fully loaded
 document.addEventListener('DOMContentLoaded', () => {
     updateResultCardsVisibility();
-    initializePricingToggle();
 });
-
-// Pricing functionality
-function initializePricingToggle() {
-    const toggle = document.getElementById('pricingToggle');
-    if (!toggle) return;
-
-    toggle.addEventListener('change', function() {
-        const monthlyPrices = document.querySelectorAll('.amount.monthly');
-        const yearlyPrices = document.querySelectorAll('.amount.yearly');
-        
-        if (this.checked) {
-            // Show yearly prices
-            monthlyPrices.forEach(price => price.style.display = 'none');
-            yearlyPrices.forEach(price => price.style.display = 'inline');
-        } else {
-            // Show monthly prices
-            monthlyPrices.forEach(price => price.style.display = 'inline');
-            yearlyPrices.forEach(price => price.style.display = 'none');
-        }
-    });
-}
-
-function selectPlan(planName) {
-    // TODO: Integrate with authentication and Stripe
-    console.log(`Selected plan: ${planName}`);
-    
-    // For now, show a toast message
-    showToast(`Selected ${planName} plan! Integration with Stripe coming soon.`, "success");
-    
-    // TODO: Redirect to Stripe Checkout or sign up flow
-    // window.location.href = `/checkout?plan=${planName}`;
-}
-
-function buyTopup(credits) {
-    // TODO: Integrate with Stripe for one-time payments
-    console.log(`Buying ${credits} credits`);
-    
-    // For now, show a toast message
-    showToast(`Buying ${credits} credits! Integration with Stripe coming soon.`, "success");
-    
-    // TODO: Redirect to Stripe Checkout for one-time payment
-    // window.location.href = `/checkout/topup?credits=${credits}`;
-}
 
 // Smooth scrolling for navigation links
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {

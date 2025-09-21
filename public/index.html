@@ -12,7 +12,7 @@
 <body>
     <!-- Navigation -->
     <nav class="navbar">
-        <div class="container nav-container">
+        <div class="nav-container">
             <div class="nav-brand">
                 <i class="fas fa-rocket"></i>
                 <span>ViralityPost</span>
@@ -20,18 +20,16 @@
             <div class="nav-links">
                 <a href="#features" class="nav-link">Features</a>
                 <a href="#how-it-works" class="nav-link">How it Works</a>
-                <a href="#pricing" class="nav-link">Pricing</a>
                 <a href="#contact" class="nav-link">Contact</a>
-                <a href="#" id="loginBtn" class="nav-link login-btn">Login</a>
             </div>
         </div>
     </nav>
 
     <!-- Hero Section -->
-    <section class="hero section" style="padding-top: calc(4rem + env(safe-area-inset-top))">
-        <div class="container">
+    <section class="hero" style="padding-top: calc(4rem + env(safe-area-inset-top))">
+        <div class="hero-container">
             <div class="hero-content">
-                <h1 class="hero-title h1">
+                <h1 class="hero-title" style="font-size: clamp(1.75rem, 8vw, 3.5rem); line-height: 1.1;">
                     AI Social Media Content Generator for 
                     <span class="gradient-text">Instagram & TikTok</span>
                 </h1>
@@ -55,7 +53,7 @@
                 </div>
                 
                 <div class="hero-cta">
-                    <a href="#generator" class="btn btn-primary btn-xl btn-full">
+                    <a href="#generator" class="btn btn-primary btn-large cta-responsive">
                         <i class="fas fa-rocket"></i>
                         <span>Start Generating Free</span>
                     </a>
@@ -99,9 +97,9 @@
     <main class="main-content">
         <div class="container">
             <!-- Generator Form -->
-            <section class="generator-section section">
+            <section class="generator-section">
                 <div class="section-header">
-                    <h2 class="h2">Create Your Content</h2>
+                    <h2>Create Your Content</h2>
                     <p>Enter your idea or upload an image to generate viral social media content</p>
                 </div>
 
@@ -146,7 +144,7 @@
                                 <i class="fas fa-share-alt"></i>
                                 Target Platforms
                             </label>
-                            <div class="platform-selector grid grid-cols-4">
+                            <div class="platform-selector platform-grid-responsive">
                                 <label class="platform-option">
                                     <input type="checkbox" value="instagram" checked>
                                     <span class="platform-icon">
@@ -224,14 +222,14 @@
 
                     <!-- Action Buttons -->
                     <div class="form-actions">
-                        <button type="submit" id="submitBtn" class="btn btn-primary btn-xl btn-full" disabled>
+                        <button type="submit" id="submitBtn" class="btn btn-primary" disabled>
                             <i class="fas fa-magic"></i>
                             <span>Generate Content</span>
                             <div class="btn-loading">
                                 <i class="fas fa-spinner fa-spin"></i>
                             </div>
                         </button>
-                        <button type="button" id="resetBtn" class="btn btn-secondary btn-lg btn-full">
+                        <button type="button" id="resetBtn" class="btn btn-secondary">
                             <i class="fas fa-refresh"></i>
                             Clear All
                         </button>
@@ -241,9 +239,9 @@
             </section>
 
             <!-- Results Section -->
-            <section id="results" class="results-section section hidden">
+            <section id="results" class="results-section hidden">
                 <div class="section-header">
-                    <h2 class="h2">Generated Content</h2>
+                    <h2>Generated Content</h2>
                     <p>Your AI-generated social media content is ready!</p>
                 </div>
 
@@ -351,14 +349,14 @@
     </main>
 
     <!-- How It Works Section -->
-    <section id="how-it-works" class="how-it-works-section section">
+    <section id="how-it-works" class="how-it-works-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="h2">How It Works</h2>
+                <h2>How It Works</h2>
                 <p>Transform your ideas into viral content in just 4 simple steps</p>
             </div>
             
-            <div class="grid grid-cols-4">
+            <div class="steps-container">
                 <div class="step-card" data-step="1">
                     <div class="step-number">01</div>
                     <div class="step-icon">
@@ -416,14 +414,14 @@
     </section>
 
     <!-- Demo Preview Section -->
-    <section class="demo-section section">
+    <section class="demo-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="h2">See It In Action</h2>
+                <h2>See It In Action</h2>
                 <p>Real examples of AI-generated content for different platforms</p>
             </div>
             
-            <div class="grid grid-cols-3">
+            <div class="demo-grid">
                 <div class="demo-card instagram-demo">
                     <div class="demo-header">
                         <i class="fab fa-instagram"></i>
@@ -492,14 +490,14 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
     </section>
 
     <!-- Social Proof Section -->
-    <section class="social-proof-section section">
+    <section class="social-proof-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="h2">Trusted by 10,000+ Creators</h2>
+                <h2>Trusted by 10,000+ Creators</h2>
                 <p>Join thousands of content creators and businesses growing their social media presence</p>
             </div>
             
-            <div class="grid grid-cols-3">
+            <div class="testimonials-grid">
                 <div class="testimonial-card">
                     <div class="testimonial-content">
                         <p>"This tool saved me 5 hours per week! The AI-generated content performs better than my manual posts."</p>
@@ -542,7 +540,7 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
 
             <div class="brands-logos">
                 <h3>Used by teams at:</h3>
-                <div class="grid grid-cols-6">
+                <div class="logos-grid">
                     <div class="logo-item">TechCorp</div>
                     <div class="logo-item">StartupXYZ</div>
                     <div class="logo-item">DigitalAgency</div>
@@ -553,187 +551,14 @@ Ready to transform your content strategy? Try our AI tool free for 30 days.
         </div>
     </section>
 
-    <!-- Pricing Section -->
-    <section id="pricing" class="pricing-section section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="h2">Simple, Transparent Pricing</h2>
-                <p>Choose the plan that fits your content creation needs</p>
-            </div>
-            
-            <div class="pricing-toggle">
-                <span class="toggle-label">Monthly</span>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="pricingToggle">
-                    <span class="slider"></span>
-                </label>
-                <span class="toggle-label">
-                    Yearly 
-                    <span class="discount-badge">-10%</span>
-                </span>
-            </div>
-            
-            <div class="grid grid-cols-3">
-                <!-- Starter Plan -->
-                <div class="pricing-card">
-                    <div class="plan-header">
-                        <h3>Starter</h3>
-                        <p>Perfect for individuals and small businesses</p>
-                    </div>
-                    <div class="plan-price">
-                        <span class="currency">€</span>
-                        <span class="amount monthly">9</span>
-                        <span class="amount yearly">8</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <div class="plan-features">
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span><strong>100 credits</strong> per month</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>All 7 social platforms</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>Image analysis</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>Email support</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>Cancel anytime</span>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary btn-xl btn-full" onclick="selectPlan('starter')">
-                        Start Free Trial
-                    </button>
-                </div>
-
-                <!-- Pro Plan -->
-                <div class="pricing-card featured">
-                    <div class="popular-badge">Most Popular</div>
-                    <div class="plan-header">
-                        <h3>Pro</h3>
-                        <p>Ideal for content creators and marketing teams</p>
-                    </div>
-                    <div class="plan-price">
-                        <span class="currency">€</span>
-                        <span class="amount monthly">29</span>
-                        <span class="amount yearly">26</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <div class="plan-features">
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span><strong>500 credits</strong> per month</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>All 7 social platforms</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>Advanced image analysis</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>Priority support</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>Content templates</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>Analytics dashboard</span>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary btn-xl btn-full" onclick="selectPlan('pro')">
-                        Start Free Trial
-                    </button>
-                </div>
-
-                <!-- Business Plan -->
-                <div class="pricing-card">
-                    <div class="plan-header">
-                        <h3>Business</h3>
-                        <p>For agencies and large organizations</p>
-                    </div>
-                    <div class="plan-price">
-                        <span class="currency">€</span>
-                        <span class="amount monthly">59</span>
-                        <span class="amount yearly">53</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <div class="plan-features">
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span><strong>Unlimited</strong> content generation</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>All 7 social platforms</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>AI image analysis</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>24/7 phone support</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>Team collaboration</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>Custom integrations</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check"></i>
-                            <span>White-label options</span>
-                        </div>
-                    </div>
-                    <button class="btn btn-primary btn-xl btn-full" onclick="selectPlan('business')">
-                        Start Free Trial
-                    </button>
-                </div>
-            </div>
-
-            <!-- Top-ups Section -->
-            <div class="topups-section">
-                <h3>Need Extra Credits?</h3>
-                <p>Buy additional credits anytime without changing your plan</p>
-                <div class="grid grid-cols-2">
-                    <div class="topup-card">
-                        <div class="topup-amount">100 Credits</div>
-                        <div class="topup-price">€10</div>
-                        <button class="btn btn-secondary btn-lg btn-full" onclick="buyTopup(100)">Buy Now</button>
-                    </div>
-                    <div class="topup-card">
-                        <div class="topup-amount">500 Credits</div>
-                        <div class="topup-price">€39</div>
-                        <div class="topup-savings">Save €11</div>
-                        <button class="btn btn-secondary btn-lg btn-full" onclick="buyTopup(500)">Buy Now</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Features Section -->
-    <section id="features" class="features-section section">
+    <section id="features" class="features-section">
         <div class="container">
             <div class="section-header">
-                <h2 class="h2">Why Choose ViralityPost?</h2>
+                <h2>Why Choose ViralityPost?</h2>
                 <p>Powerful features that make content creation effortless</p>
             </div>
-            <div class="grid grid-cols-3">
+            <div class="features-grid">
                 <div class="feature-card">
                     <div class="feature-icon">
                         <i class="fas fa-brain"></i>
