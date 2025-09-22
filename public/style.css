@@ -166,6 +166,7 @@ body {
     position: relative;
     overflow: hidden;
     padding-top: var(--nav-h-desktop);
+    z-index: 0;
 }
 
 .hero-container {
@@ -305,6 +306,8 @@ body {
 .hero-visual {
     position: relative;
     height: 400px;
+    pointer-events: none;
+    z-index: 1;
 }
 
 .floating-card {
@@ -323,6 +326,8 @@ body {
     animation: float 6s ease-in-out infinite;
     text-align: center;
     min-width: 140px;
+    pointer-events: auto;
+    z-index: 2;
 }
 
 .floating-card i {
@@ -1064,6 +1069,7 @@ body {
     bottom: 0;
     background: radial-gradient(ellipse at center, rgba(99, 102, 241, 0.05) 0%, transparent 70%);
     pointer-events: none;
+    z-index: 1;
 }
 
 .steps-container {
@@ -1098,6 +1104,8 @@ body {
     height: 100%;
     background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1), transparent);
     transition: var(--transition-normal);
+    pointer-events: none;
+    z-index: 1;
 }
 
 .step-card:hover::before {
@@ -1535,20 +1543,24 @@ body {
     height: 100vh;
     background: rgba(15, 15, 35, 0.98);
     backdrop-filter: blur(20px);
-    z-index: 40;
+    z-index: 60;
     transform: translateX(-100%);
-    transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+    transition: transform 0.3s ease;
     padding-top: 80px;
+    display: none;
     pointer-events: none;
     opacity: 0;
     visibility: hidden;
+    aria-hidden: true;
 }
 
-.mobile-menu.open {
+.mobile-menu.is-open {
+    display: block;
     transform: translateX(0);
     pointer-events: auto;
     opacity: 1;
     visibility: visible;
+    aria-hidden: false;
 }
 
 .mobile-menu-content {
@@ -2012,19 +2024,22 @@ body.menu-open {
     bottom: 0;
     background: rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(4px);
-    display: flex;
+    display: none;
     align-items: center;
     justify-content: center;
-    z-index: 60;
+    z-index: 70;
     opacity: 0;
     visibility: hidden;
     transition: var(--transition-fast);
     padding: var(--space-lg);
+    pointer-events: none;
 }
 
 .modal-overlay.active {
+    display: flex;
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
 }
 
 .modal-content {
@@ -2136,7 +2151,7 @@ body.menu-open {
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
     transform: translateX(400px);
     transition: var(--transition-fast);
-    z-index: 70;
+    z-index: 80;
 }
 
 .toast.show {

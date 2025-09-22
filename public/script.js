@@ -24,64 +24,60 @@ console.log("Image elements check:", {
 function diagnoseMobileTapIssues() {
     if (window.innerWidth > 768) return; // Only on mobile
     
-    const centerX = window.innerWidth / 2;
-    const centerY = window.innerHeight / 2;
-    
-    const topLeftElement = document.elementFromPoint(10, 10);
-    const centerElement = document.elementFromPoint(centerX, centerY);
-    
     console.log("=== MOBILE TAP DIAGNOSTICS ===");
-    console.log("Top-left element:", {
-        tagName: topLeftElement?.tagName,
-        className: topLeftElement?.className,
-        id: topLeftElement?.id,
-        pointerEvents: getComputedStyle(topLeftElement || document.body).pointerEvents,
-        zIndex: getComputedStyle(topLeftElement || document.body).zIndex,
-        position: getComputedStyle(topLeftElement || document.body).position
-    });
     
-    console.log("Center element:", {
-        tagName: centerElement?.tagName,
-        className: centerElement?.className,
-        id: centerElement?.id,
-        pointerEvents: getComputedStyle(centerElement || document.body).pointerEvents,
-        zIndex: getComputedStyle(centerElement || document.body).zIndex,
-        position: getComputedStyle(centerElement || document.body).position
-    });
-    
-    // Find potential blocking overlays
+    // Find blocking overlays (≥95% viewport coverage)
     const allElements = document.querySelectorAll('*');
     const blockingElements = [];
     
     allElements.forEach(el => {
         const style = getComputedStyle(el);
         const rect = el.getBoundingClientRect();
-        const viewportArea = window.innerWidth * window.innerHeight;
-        const elementArea = rect.width * rect.height;
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
         
         if (
-            elementArea > viewportArea * 0.9 && // Covers >90% of viewport
+            rect.width >= viewportWidth * 0.95 && 
+            rect.height >= viewportHeight * 0.95 &&
             (style.position === 'fixed' || style.position === 'absolute') &&
             style.pointerEvents !== 'none' &&
             parseFloat(style.opacity) > 0.01 &&
-            style.visibility !== 'hidden' &&
-            parseInt(style.zIndex) > 0
+            style.visibility !== 'hidden'
         ) {
+            const selector = el.id ? `#${el.id}` : 
+                           el.className ? `.${el.className.split(' ').join('.')}` : 
+                           el.tagName.toLowerCase();
+            
             blockingElements.push({
-                element: el,
-                tagName: el.tagName,
-                className: el.className,
-                id: el.id,
-                zIndex: style.zIndex,
-                pointerEvents: style.pointerEvents,
-                position: style.position,
+                selector: selector,
+                'z-index': style.zIndex,
+                'pointer-events': style.pointerEvents,
                 opacity: style.opacity,
-                visibility: style.visibility
+                visibility: style.visibility,
+                position: style.position,
+                width: `${Math.round(rect.width)}px`,
+                height: `${Math.round(rect.height)}px`
             });
         }
     });
     
-    console.log("Potential blocking overlays:", blockingElements);
+    if (blockingElements.length > 0) {
+        console.table(blockingElements);
+        console.warn("🚨 BLOCKING OVERLAYS DETECTED - These may prevent mobile taps!");
+    } else {
+        console.log("✅ No blocking overlays detected");
+    }
+    
+    // Add touch event listener for debugging
+    document.addEventListener('touchstart', function(e) {
+        console.log('📱 TAPPED:', {
+            target: e.target,
+            tagName: e.target.tagName,
+            className: e.target.className,
+            id: e.target.id,
+            href: e.target.href || 'no href'
+        });
+    }, { passive: true });
 }
 
 // Run diagnostics after page load
@@ -445,14 +441,18 @@ document.addEventListener('DOMContentLoaded', function() {
         hamburger.setAttribute('aria-expanded', isMenuOpen);
         
         if (isMenuOpen) {
-            mobileMenu.classList.add('open');
+            mobileMenu.classList.add('is-open');
+            mobileMenu.setAttribute('aria-hidden', 'false');
             body.classList.add('menu-open');
             // Focus trap: focus first link when menu opens
             setTimeout(() => {
-                mobileNavLinks[0].focus();
+                if (mobileNavLinks[0]) {
+                    mobileNavLinks[0].focus();
+                }
             }, 100);
         } else {
-            mobileMenu.classList.remove('open');
+            mobileMenu.classList.remove('is-open');
+            mobileMenu.setAttribute('aria-hidden', 'true');
             body.classList.remove('menu-open');
         }
     }
