@@ -361,6 +361,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const body = document.body;
     const navbar = document.querySelector('.navbar');
     
+    // Debug: Check if mobile menu elements exist
+    console.log("Mobile menu elements check:", {
+        hamburger: !!hamburger,
+        mobileMenu: !!mobileMenu,
+        mobileNavLinks: mobileNavLinks.length,
+        body: !!body,
+        navbar: !!navbar
+    });
+    
     let isMenuOpen = false;
     
     function toggleMenu() {
@@ -388,7 +397,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Hamburger click
-    hamburger.addEventListener('click', toggleMenu);
+    if (hamburger) {
+        hamburger.addEventListener('click', toggleMenu);
+    }
     
     // Close menu when clicking on mobile nav links
     mobileNavLinks.forEach(link => {
@@ -396,11 +407,13 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Close menu when clicking outside
-    mobileMenu.addEventListener('click', function(e) {
-        if (e.target === mobileMenu) {
-            closeMenu();
-        }
-    });
+    if (mobileMenu) {
+        mobileMenu.addEventListener('click', function(e) {
+            if (e.target === mobileMenu) {
+                closeMenu();
+            }
+        });
+    }
     
     // Close menu with ESC key
     document.addEventListener('keydown', function(e) {
@@ -410,9 +423,10 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     // Focus trap for mobile menu
-    mobileNavLinks.forEach((link, index) => {
-        link.addEventListener('keydown', function(e) {
-            if (e.key === 'Tab') {
+    if (mobileNavLinks.length > 0) {
+        mobileNavLinks.forEach((link, index) => {
+            link.addEventListener('keydown', function(e) {
+                if (e.key === 'Tab') {
                 if (e.shiftKey && index === 0) {
                     // Shift+Tab on first link: focus last link
                     e.preventDefault();
@@ -424,7 +438,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             }
         });
-    });
+        });
+    }
     
     // Mobile navbar scroll shadow effect
     function handleScroll() {
