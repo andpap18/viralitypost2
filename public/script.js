@@ -20,6 +20,73 @@ console.log("Image elements check:", {
     removeImageBtn: !!removeImageBtn
 });
 
+// Mobile Tap Diagnostics (Development Only)
+function diagnoseMobileTapIssues() {
+    if (window.innerWidth > 768) return; // Only on mobile
+    
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    const topLeftElement = document.elementFromPoint(10, 10);
+    const centerElement = document.elementFromPoint(centerX, centerY);
+    
+    console.log("=== MOBILE TAP DIAGNOSTICS ===");
+    console.log("Top-left element:", {
+        tagName: topLeftElement?.tagName,
+        className: topLeftElement?.className,
+        id: topLeftElement?.id,
+        pointerEvents: getComputedStyle(topLeftElement || document.body).pointerEvents,
+        zIndex: getComputedStyle(topLeftElement || document.body).zIndex,
+        position: getComputedStyle(topLeftElement || document.body).position
+    });
+    
+    console.log("Center element:", {
+        tagName: centerElement?.tagName,
+        className: centerElement?.className,
+        id: centerElement?.id,
+        pointerEvents: getComputedStyle(centerElement || document.body).pointerEvents,
+        zIndex: getComputedStyle(centerElement || document.body).zIndex,
+        position: getComputedStyle(centerElement || document.body).position
+    });
+    
+    // Find potential blocking overlays
+    const allElements = document.querySelectorAll('*');
+    const blockingElements = [];
+    
+    allElements.forEach(el => {
+        const style = getComputedStyle(el);
+        const rect = el.getBoundingClientRect();
+        const viewportArea = window.innerWidth * window.innerHeight;
+        const elementArea = rect.width * rect.height;
+        
+        if (
+            elementArea > viewportArea * 0.9 && // Covers >90% of viewport
+            (style.position === 'fixed' || style.position === 'absolute') &&
+            style.pointerEvents !== 'none' &&
+            parseFloat(style.opacity) > 0.01 &&
+            style.visibility !== 'hidden' &&
+            parseInt(style.zIndex) > 0
+        ) {
+            blockingElements.push({
+                element: el,
+                tagName: el.tagName,
+                className: el.className,
+                id: el.id,
+                zIndex: style.zIndex,
+                pointerEvents: style.pointerEvents,
+                position: style.position,
+                opacity: style.opacity,
+                visibility: style.visibility
+            });
+        }
+    });
+    
+    console.log("Potential blocking overlays:", blockingElements);
+}
+
+// Run diagnostics after page load
+setTimeout(diagnoseMobileTapIssues, 1000);
+
 // Platform checkboxes
 const platformCheckboxes = document.querySelectorAll('.platform-option input[type="checkbox"]');
 
