@@ -290,6 +290,11 @@ body {
     text-align: center;
 }
 
+/* Secondary CTA */
+.cta-secondary {
+    margin-top: var(--space-md);
+}
+
 /* Hero Visual */
 .hero-visual {
     position: relative;
