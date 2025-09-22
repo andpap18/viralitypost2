@@ -83,6 +83,61 @@ function diagnoseMobileTapIssues() {
 // Run diagnostics after page load
 setTimeout(diagnoseMobileTapIssues, 1000);
 
+// TEMPORARY: Identify blocking element for mobile taps
+function identifyBlockingElement() {
+    if (window.innerWidth > 768) return; // Only on mobile
+    
+    console.log("🔍 IDENTIFYING BLOCKING ELEMENT FOR MOBILE TAPS");
+    
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    // Check center of screen
+    const centerElement = document.elementFromPoint(centerX, centerY);
+    console.log("📍 CENTER ELEMENT (", centerX, ",", centerY, "):");
+    console.log("Blocking element:", centerElement);
+    console.log("className:", centerElement?.className);
+    console.log("id:", centerElement?.id);
+    console.log("tagName:", centerElement?.tagName);
+    console.log("computedStyle:", window.getComputedStyle(centerElement || document.body));
+    
+    // Check top-left corner
+    const topLeftElement = document.elementFromPoint(10, 10);
+    console.log("📍 TOP-LEFT ELEMENT (10, 10):");
+    console.log("Blocking element:", topLeftElement);
+    console.log("className:", topLeftElement?.className);
+    console.log("id:", topLeftElement?.id);
+    console.log("tagName:", topLeftElement?.tagName);
+    console.log("computedStyle:", window.getComputedStyle(topLeftElement || document.body));
+    
+    // Check where hero CTA should be (approximately)
+    const heroCTAElement = document.elementFromPoint(centerX, centerY + 100);
+    console.log("📍 HERO CTA AREA (", centerX, ",", centerY + 100, "):");
+    console.log("Blocking element:", heroCTAElement);
+    console.log("className:", heroCTAElement?.className);
+    console.log("id:", heroCTAElement?.id);
+    console.log("tagName:", heroCTAElement?.tagName);
+    console.log("computedStyle:", window.getComputedStyle(heroCTAElement || document.body));
+    
+    // Summary
+    console.log("🎯 SUMMARY - Most likely blocking elements:");
+    console.log("Center:", centerElement?.className || centerElement?.id || "no class/id");
+    console.log("Top-left:", topLeftElement?.className || topLeftElement?.id || "no class/id");
+    console.log("Hero CTA area:", heroCTAElement?.className || heroCTAElement?.id || "no class/id");
+    
+    // Check if elements have pointer-events: none
+    [centerElement, topLeftElement, heroCTAElement].forEach((el, index) => {
+        if (el) {
+            const style = window.getComputedStyle(el);
+            const positions = ["center", "top-left", "hero-CTA"];
+            console.log(`${positions[index]} element pointer-events:`, style.pointerEvents);
+        }
+    });
+}
+
+// Run blocking element identification
+setTimeout(identifyBlockingElement, 500);
+
 // Platform checkboxes
 const platformCheckboxes = document.querySelectorAll('.platform-option input[type="checkbox"]');
 
