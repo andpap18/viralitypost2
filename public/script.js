@@ -149,10 +149,40 @@ const helper = document.getElementById("helper");
 
 // Toast notification function
 function showToast(message, type = 'success') {
-    toast.textContent = message;
-    toast.className = `toast show ${type}`;
+    // Clear existing content
+    toast.innerHTML = '';
+    
+    // Create toast card with pointer-events: auto
+    const toastCard = document.createElement('div');
+    toastCard.className = 'toast-card';
+    
+    // Create content structure
+    const content = document.createElement('div');
+    content.className = 'toast-content';
+    
+    const icon = document.createElement('i');
+    icon.className = type === 'success' ? 'fas fa-check-circle' : 'fas fa-exclamation-circle';
+    
+    const messageSpan = document.createElement('span');
+    messageSpan.className = 'toast-message';
+    messageSpan.textContent = message;
+    
+    content.appendChild(icon);
+    content.appendChild(messageSpan);
+    toastCard.appendChild(content);
+    toast.appendChild(toastCard);
+    
+    // Show toast
+    toast.className = 'toast show';
+    toast.style.display = 'block';
+    toast.setAttribute('aria-hidden', 'false');
+    
+    // Auto-hide after 3 seconds
     setTimeout(() => {
         toast.classList.remove("show");
+        toast.style.display = 'none';
+        toast.setAttribute('aria-hidden', 'true');
+        toast.innerHTML = ''; // Clear content
     }, 3000);
 }
 

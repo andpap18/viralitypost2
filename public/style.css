@@ -1441,35 +1441,44 @@ body {
 /* Toast Notification */
 .toast {
     position: fixed;
-    bottom: var(--space-xl);
-    right: var(--space-xl);
-    background: var(--bg-card);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: var(--radius-lg);
-    padding: var(--space-lg) var(--space-xl);
-    color: var(--text-primary);
-    font-weight: 500;
-    box-shadow: var(--shadow-xl);
-    transform: translateX(100%);
-    opacity: 0;
-    transition: var(--transition-normal);
-    z-index: 1001;
-    backdrop-filter: blur(20px);
+    top: 20px;
+    right: 20px;
+    background: var(--success);
+    color: white;
+    padding: var(--space-md) var(--space-lg);
+    border-radius: 8px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    transform: translateX(400px);
+    transition: var(--transition-fast);
+    z-index: 80;
+    display: none;
+    pointer-events: none;
+    max-width: 300px;
 }
 
 .toast.show {
+    display: block;
     transform: translateX(0);
-    opacity: 1;
+    pointer-events: none;
 }
 
-.toast.success {
-    border-color: var(--success);
-    background: rgba(16, 185, 129, 0.1);
+.toast-card {
+    pointer-events: auto;
+    cursor: pointer;
 }
 
-.toast.error {
-    border-color: var(--error);
-    background: rgba(239, 68, 68, 0.1);
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
+.toast-content i {
+    font-size: 1.25rem;
+}
+
+.toast-message {
+    font-weight: 500;
 }
 
 /* Utility Classes */
@@ -2139,38 +2148,6 @@ body.menu-open {
     box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
-/* Toast Notification */
-.toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background: var(--success);
-    color: white;
-    padding: var(--space-md) var(--space-lg);
-    border-radius: 8px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-    transform: translateX(400px);
-    transition: var(--transition-fast);
-    z-index: 80;
-}
-
-.toast.show {
-    transform: translateX(0);
-}
-
-.toast-content {
-    display: flex;
-    align-items: center;
-    gap: var(--space-sm);
-}
-
-.toast-content i {
-    font-size: 1.25rem;
-}
-
-.toast-message {
-    font-weight: 500;
-}
 
 /* Body scroll lock when modal is open */
 body.modal-open {
@@ -2207,6 +2184,7 @@ body.modal-open {
         right: 10px;
         left: 10px;
         transform: translateY(-100px);
+        max-width: none;
     }
     
     .toast.show {
