@@ -89,10 +89,10 @@
                         <span class="price-amount">0</span>
                         <span class="price-period">/month</span>
                     </div>
+                    <div class="plan-credits">20 credits / month</div>
                     <div class="plan-features">
                         <ul>
-                            <li><i class="fas fa-check"></i> 20 content credits</li>
-                            <li><i class="fas fa-check"></i> All 7 social platforms</li>
+                            <li><i class="fas fa-check"></i> 1 social platform</li>
                             <li><i class="fas fa-check"></i> Basic templates</li>
                             <li><i class="fas fa-check"></i> Email support</li>
                         </ul>
@@ -103,28 +103,52 @@
                 </div>
 
                 <!-- Pro Plan -->
-                <div class="pricing-card featured">
-                    <div class="plan-badge">Best Value</div>
+                <div class="pricing-card">
                     <div class="plan-header">
                         <h3 class="plan-name">Pro</h3>
-                        <p class="plan-description">Best for content creators</p>
+                        <p class="plan-description">For small creators managing Instagram & TikTok</p>
                     </div>
                     <div class="plan-price">
                         <span class="price-currency">$</span>
-                        <span class="price-amount">29</span>
+                        <span class="price-amount" data-monthly="4.99" data-yearly="3.99">4.99</span>
                         <span class="price-period">/month</span>
                     </div>
+                    <div class="plan-credits">200 credits / month</div>
                     <div class="plan-features">
                         <ul>
-                            <li><i class="fas fa-check"></i> 500 content credits</li>
                             <li><i class="fas fa-check"></i> All 7 social platforms</li>
                             <li><i class="fas fa-check"></i> Premium templates</li>
-                            <li><i class="fas fa-check"></i> Advanced AI features</li>
-                            <li><i class="fas fa-check"></i> Priority support</li>
+                            <li><i class="fas fa-check"></i> Email support</li>
                         </ul>
                     </div>
                     <button class="btn btn-primary btn-large plan-cta" onclick="openWaitlistModal('Pro')">
-                        Coming Soon – Join Waitlist
+                        Upgrade to Pro
+                    </button>
+                </div>
+
+                <!-- Creator+ Plan -->
+                <div class="pricing-card featured">
+                    <div class="plan-badge">Most Popular</div>
+                    <div class="plan-header">
+                        <h3 class="plan-name">Creator+</h3>
+                        <p class="plan-description">Best value for serious creators</p>
+                    </div>
+                    <div class="plan-price">
+                        <span class="price-currency">$</span>
+                        <span class="price-amount" data-monthly="9.99" data-yearly="7.99">9.99</span>
+                        <span class="price-period">/month</span>
+                    </div>
+                    <div class="plan-credits">1,000 credits / month</div>
+                    <div class="plan-features">
+                        <ul>
+                            <li><i class="fas fa-check"></i> All 7 social platforms</li>
+                            <li><i class="fas fa-check"></i> Advanced AI features</li>
+                            <li><i class="fas fa-check"></i> Priority support</li>
+                            <li><i class="fas fa-check"></i> Custom templates</li>
+                        </ul>
+                    </div>
+                    <button class="btn btn-primary btn-large plan-cta" onclick="openWaitlistModal('Creator+')">
+                        Start Free Trial
                     </button>
                 </div>
 
@@ -136,21 +160,20 @@
                     </div>
                     <div class="plan-price">
                         <span class="price-currency">$</span>
-                        <span class="price-amount">59</span>
+                        <span class="price-amount" data-monthly="19.99" data-yearly="15.99">19.99</span>
                         <span class="price-period">/month</span>
                     </div>
+                    <div class="plan-credits">5,000 credits / month</div>
                     <div class="plan-features">
                         <ul>
-                            <li><i class="fas fa-check"></i> Unlimited content</li>
                             <li><i class="fas fa-check"></i> All 7 social platforms</li>
-                            <li><i class="fas fa-check"></i> Custom templates</li>
-                            <li><i class="fas fa-check"></i> Team collaboration</li>
                             <li><i class="fas fa-check"></i> API access</li>
+                            <li><i class="fas fa-check"></i> Team collaboration</li>
                             <li><i class="fas fa-check"></i> Dedicated support</li>
                         </ul>
                     </div>
                     <button class="btn btn-primary btn-large plan-cta" onclick="openWaitlistModal('Business')">
-                        Coming Soon – Join Waitlist
+                        Contact Sales
                     </button>
                 </div>
             </div>
@@ -196,18 +219,45 @@
     <script>
         // Pricing page specific functionality
         document.addEventListener('DOMContentLoaded', function() {
-            // Billing toggle functionality
+            // Billing toggle functionality with price updates
             const toggle = document.getElementById('billing-toggle');
             const monthlyOption = document.querySelector('[data-billing="monthly"]');
             const yearlyOption = document.querySelector('[data-billing="yearly"]');
+            const priceAmounts = document.querySelectorAll('.price-amount');
+            const pricePeriods = document.querySelectorAll('.price-period');
             
             if (toggle) {
                 toggle.addEventListener('change', function() {
-                    monthlyOption.classList.toggle('active', !this.checked);
-                    yearlyOption.classList.toggle('active', this.checked);
+                    const isYearly = this.checked;
                     
-                    // For now, just UI demo - no price changes
-                    console.log('Billing period:', this.checked ? 'yearly' : 'monthly');
+                    // Update toggle UI
+                    monthlyOption.classList.toggle('active', !isYearly);
+                    yearlyOption.classList.toggle('active', isYearly);
+                    
+                    // Update prices
+                    priceAmounts.forEach(amount => {
+                        const monthlyPrice = amount.getAttribute('data-monthly');
+                        const yearlyPrice = amount.getAttribute('data-yearly');
+                        
+                        if (monthlyPrice && yearlyPrice) {
+                            if (isYearly) {
+                                amount.textContent = yearlyPrice;
+                            } else {
+                                amount.textContent = monthlyPrice;
+                            }
+                        }
+                    });
+                    
+                    // Update period text
+                    pricePeriods.forEach(period => {
+                        if (isYearly) {
+                            period.textContent = '/month';
+                            period.innerHTML = '/month<br><small style="color: var(--success); font-weight: 500;">(billed yearly)</small>';
+                        } else {
+                            period.textContent = '/month';
+                            period.innerHTML = '/month';
+                        }
+                    });
                 });
             }
 

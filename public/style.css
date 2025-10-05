@@ -1969,7 +1969,15 @@ body.menu-open {
 }
 
 .plan-price {
+    margin-bottom: var(--space-sm);
+}
+
+.plan-credits {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    font-weight: 500;
     margin-bottom: var(--space-xl);
+    text-align: center;
 }
 
 .price-currency {
