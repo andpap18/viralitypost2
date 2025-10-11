@@ -2028,6 +2028,12 @@ body.menu-open {
     color: var(--text-secondary);
     font-size: 1rem;
     margin: 0;
+    min-height: 60px; /* Force consistent height to accommodate 3-line descriptions */
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
 }
 
 .plan-total-year {
@@ -2372,7 +2378,7 @@ body.modal-open {
 
 /* ---------- PRICING SYMMETRY FIX ---------- */
 :root {
-    --subtitle-min-h: 44px;      /* same space for all subtitles */
+    --subtitle-min-h: 60px;      /* same space for all subtitles (fits 3 lines) */
     --price-min-h: 120px;        /* same space for price + billed + total */
     --features-gap-top: 16px;    /* space between price block and features */
 }
@@ -2390,12 +2396,13 @@ body.modal-open {
 }
 
 .pricing-card .subtitle {
-    min-height: var(--subtitle-min-h);
+    min-height: 60px; /* Force consistent height for 3-line descriptions */
     display: flex;
     align-items: center;
     text-align: center;
     margin: 0;
     justify-content: center;
+    line-height: 1.4;
 }
 
 /* 2) Price block - Fixed min-height keeps alignment even when billed note hidden */
@@ -2496,8 +2503,14 @@ body.modal-open {
 /* 5) Responsive tuning for mobile */
 @media (max-width: 768px) {
     :root {
-        --subtitle-min-h: 40px;
+        --subtitle-min-h: 60px; /* Keep same height on mobile for 3-line descriptions */
         --price-min-h: 108px;
+    }
+    
+    .pricing-card .plan-sub,
+    .pricing-card .subtitle {
+        min-height: 60px; /* Accommodate 3-line text on mobile */
+        font-size: 0.95rem;
     }
     
     .pricing-card .pricing-card__cta .plan-cta {
