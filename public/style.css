@@ -2354,3 +2354,138 @@ body.modal-open {
         z-index: 20;
     }
 }
+
+/* ---------- PRICING SYMMETRY FIX ---------- */
+:root {
+    --subtitle-min-h: 44px;      /* same space for all subtitles */
+    --price-min-h: 120px;        /* same space for price + billed + total */
+    --features-gap-top: 16px;    /* space between price block and features */
+}
+
+/* Ensure card flexbox structure */
+.pricing-card .card-body {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+/* 1) Titles/Subtitles - Fixed min-height for alignment */
+.pricing-card .plan-name {
+    margin: 0 0 8px 0;
+}
+
+.pricing-card .subtitle {
+    min-height: var(--subtitle-min-h);
+    display: flex;
+    align-items: center;
+    text-align: center;
+    margin: 0;
+    justify-content: center;
+}
+
+/* 2) Price block - Fixed min-height keeps alignment even when billed note hidden */
+.pricing-card .price-section {
+    min-height: var(--price-min-h);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: var(--space-lg);
+}
+
+.pricing-card .price-section .price-line {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    justify-content: center;
+}
+
+.pricing-card .price-section .currency {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    vertical-align: top;
+}
+
+.pricing-card .price-section .price {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--primary);
+    line-height: 1;
+    transition: opacity 0.15s ease;
+}
+
+.pricing-card .price-section .per {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+.pricing-card .price-section .billed-note,
+.pricing-card .price-section .price-total {
+    margin: 4px 0 0;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.pricing-card .price-section .billed-note {
+    display: none; /* Hidden by default (Monthly mode) */
+}
+
+.pricing-card .price-section .price-total {
+    display: none; /* Hidden by default (Monthly mode) */
+}
+
+/* 3) Features start at same vertical baseline across cards */
+.pricing-card .features {
+    margin-top: var(--features-gap-top);
+    list-style: none;
+    padding: 0;
+    text-align: left;
+}
+
+.pricing-card .features li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+    padding: var(--space-sm) 0;
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+}
+
+.pricing-card .features li i {
+    color: var(--success);
+    font-size: 0.875rem;
+    flex-shrink: 0;
+}
+
+/* 4) CTA wrapper - Pushes to bottom and centers */
+.pricing-card .pricing-card__cta {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    text-align: center;
+}
+
+.pricing-card .pricing-card__cta .plan-cta {
+    display: inline-flex;
+    margin-inline: auto;
+    width: 100%;
+    max-width: 100%;
+}
+
+/* 5) Responsive tuning for mobile */
+@media (max-width: 768px) {
+    :root {
+        --subtitle-min-h: 40px;
+        --price-min-h: 108px;
+    }
+    
+    .pricing-card .pricing-card__cta .plan-cta {
+        max-width: 420px;
+    }
+}
