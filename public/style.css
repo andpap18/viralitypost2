@@ -2022,6 +2022,7 @@ body.menu-open {
     font-weight: 700;
     color: var(--text-primary);
     margin: 0 0 8px 0;
+    flex-shrink: 0; /* Prevent title from shrinking */
 }
 
 .pricing-card .plan-sub {
@@ -2034,6 +2035,7 @@ body.menu-open {
     align-items: center;
     justify-content: center;
     text-align: center;
+    flex-shrink: 0; /* Prevent subtitle from shrinking */
 }
 
 .plan-total-year {
@@ -2568,12 +2570,14 @@ body.modal-open {
     }
 }
 
-/* ---------- ABSOLUTE PRICING SYMMETRY WITH GRID ---------- */
+/* ---------- ABSOLUTE PRICING SYMMETRY WITH FLEXBOX ---------- */
 .pricing-card {
-    display: grid !important;
-    grid-template-rows: auto auto auto 1fr auto; /* title, sub, price, features (flexible), CTA */
+    display: flex !important;
+    flex-direction: column;
     gap: 16px;
     padding: 24px;
+    /* Ensure consistent height and alignment */
+    height: 100%;
 }
 
 /* Override any legacy wrapper styles */
@@ -2595,6 +2599,7 @@ body.modal-open {
     align-items: start;
     justify-items: center;
     width: 100%;
+    flex-shrink: 0; /* Prevent price block from shrinking */
 }
 
 .pricing-card .price-row {
@@ -2654,12 +2659,15 @@ body.modal-open {
     max-height: 20px; /* Animate to a specific height */
 }
 
-/* FEATURES with equal height across cards */
-.features {
+/* FEATURES with equal height across cards - THE FINAL FIX */
+.pricing-card .features {
     display: grid;
     gap: 10px;
     align-content: start;
     min-height: var(--features-min-h, auto); /* set by JS */
+    /* THE KEY: Absorb extra space and push CTA to bottom */
+    flex-grow: 1;
+    /* Creates stable buffer zone that absorbs description height differences */
 }
 
 /* Features list item alignment */
@@ -2670,11 +2678,13 @@ body.modal-open {
     column-gap: 10px;
 }
 
-/* CTA centered */
+/* CTA centered and pushed to bottom */
 .pricing-card .pricing-card__cta {
     display: flex !important;
     justify-content: center;
     align-items: center;
+    margin-top: auto; /* Pushes to bottom in flex container */
+    flex-shrink: 0; /* Prevents CTA from shrinking */
 }
 
 .pricing-card .pricing-card__cta .plan-cta {
