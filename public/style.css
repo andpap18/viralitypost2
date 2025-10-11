@@ -1989,6 +1989,7 @@ body.menu-open {
     pointer-events: none;
 }
 
+/* Legacy classes - now handled by new structure */
 .plan-header {
     margin-bottom: var(--space-lg);
     width: 100%;
@@ -2013,6 +2014,20 @@ body.menu-open {
     justify-content: center;
     gap: 0.25rem;
     width: 100%;
+}
+
+/* Override legacy styles for new structure */
+.pricing-card .plan-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0 0 8px 0;
+}
+
+.pricing-card .plan-sub {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin: 0;
 }
 
 .plan-total-year {
@@ -2548,6 +2563,11 @@ body.modal-open {
     padding: 24px;
 }
 
+/* Override any legacy wrapper styles */
+.pricing-card .card-body {
+    display: contents; /* Remove any wrapper styling that could interfere */
+}
+
 /* Tabular nums for perfect number alignment */
 .pricing-card, .price-row, .price-amount {
     font-variant-numeric: tabular-nums;
@@ -2555,59 +2575,68 @@ body.modal-open {
 }
 
 /* PRICE BLOCK - Perfect baseline alignment */
-.price-block {
-    display: grid;
-    grid-template-rows: auto auto; /* price-row, price-note */
+.pricing-card .price-block {
+    display: grid !important;
+    grid-template-rows: auto auto auto; /* price-row, price-note, total-annual */
     gap: 8px;
     align-items: start;
     justify-items: center;
+    width: 100%;
 }
 
-.price-row {
-    display: flex;
+.pricing-card .price-row {
+    display: flex !important;
     justify-content: center; /* Horizontally center */
     align-items: center;     /* Vertically center - THE KEY FIX */
     min-height: 65px;        /* Force a consistent height for the container - THE KEY FIX */
     gap: 10px;
     line-height: 1;
+    width: 100%;
 }
 
-.price-row .currency {
-    font-size: clamp(18px, 1.4vw, 20px);
+.pricing-card .price-row .currency {
+    font-size: clamp(18px, 1.4vw, 20px) !important;
     opacity: .9;
     transform: translateY(2px);
+    line-height: 1;
 }
 
-.price-row .price-amount {
-    font-size: clamp(44px, 5.5vw, 56px);
+.pricing-card .price-row .price-amount {
+    font-size: clamp(44px, 5.5vw, 56px) !important;
     font-weight: 800;
     letter-spacing: -0.02em;
+    line-height: 1;
 }
 
-.price-row .price-unit {
-    font-size: clamp(14px, 1.4vw, 16px);
+.pricing-card .price-row .price-unit {
+    font-size: clamp(14px, 1.4vw, 16px) !important;
     opacity: .85;
+    line-height: 1;
 }
 
-.price-note {
-    font-size: 12px;
+.pricing-card .price-note {
+    font-size: 12px !important;
     opacity: .85;
     min-height: 1em; /* keeps space even if hidden */
     transition: opacity 0.3s ease, visibility 0.3s ease;
+    width: 100%;
+    text-align: center;
 }
 
-.price-total-annual {
-    font-size: 11px;
+.pricing-card .price-total-annual {
+    font-size: 11px !important;
     color: var(--text-muted);
     opacity: 0; /* Hidden by default */
     max-height: 0; /* Collapsed by default */
     overflow: hidden;
     margin-top: 4px;
     transition: opacity 0.3s ease, max-height 0.3s ease; /* Animate max-height */
+    width: 100%;
+    text-align: center;
 }
 
 /* When the yearly view is active, reveal the element */
-.yearly-view-active .price-total-annual {
+.yearly-view-active .pricing-card .price-total-annual {
     opacity: 0.7;
     max-height: 20px; /* Animate to a specific height */
 }
