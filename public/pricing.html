@@ -90,7 +90,7 @@
                             <span class="price-unit">/month</span>
                         </div>
                         <div class="price-note">(billed yearly)</div>
-                        <div class="price-total-annual">(Total: $0.00 / year)</div>
+                        <div class="price-total-annual"><i class="fas fa-check-circle"></i> Total: $0.00 / year</div>
                     </div>
 
                     <ul class="features">
@@ -117,7 +117,7 @@
                             <span class="price-unit">/month</span>
                         </div>
                         <div class="price-note">(billed yearly)</div>
-                        <div class="price-total-annual">(Total: $47.88 / year)</div>
+                        <div class="price-total-annual"><i class="fas fa-check-circle"></i> Total: $47.88 / year</div>
                     </div>
 
                     <ul class="features">
@@ -146,7 +146,7 @@
                             <span class="price-unit">/month</span>
                         </div>
                         <div class="price-note">(billed yearly)</div>
-                        <div class="price-total-annual">(Total: $95.88 / year)</div>
+                        <div class="price-total-annual"><i class="fas fa-check-circle"></i> Total: $95.88 / year</div>
                     </div>
 
                     <ul class="features">
@@ -174,7 +174,7 @@
                             <span class="price-unit">/month</span>
                         </div>
                         <div class="price-note">(billed yearly)</div>
-                        <div class="price-total-annual">(Total: $191.88 / year)</div>
+                        <div class="price-total-annual"><i class="fas fa-check-circle"></i> Total: $191.88 / year</div>
                     </div>
 
                     <ul class="features">
@@ -337,16 +337,13 @@
                             }, 150);
                         }
                         
-                        // Update yearly total
-                        const priceTotal = amount.closest('.pricing-card').querySelector('.price-total');
-                        if (priceTotal && monthlyPrice && yearlyPrice) {
+                        // Update yearly total annual display
+                        const totalAnnual = amount.closest('.pricing-card').querySelector('.price-total-annual');
+                        if (totalAnnual && monthlyPrice && yearlyPrice) {
                             if (isYearly) {
                                 const currentPrice = parseFloat(yearlyPrice);
                                 const totalYearly = (currentPrice * 12).toFixed(2);
-                                priceTotal.textContent = `Total: $${totalYearly}/year`;
-                                priceTotal.style.display = 'block';
-                            } else {
-                                priceTotal.style.display = 'none';
+                                totalAnnual.innerHTML = `<i class="fas fa-check-circle"></i> Total: $${totalYearly} / year`;
                             }
                         }
                     });

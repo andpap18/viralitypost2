@@ -2642,21 +2642,37 @@ body.modal-open {
 }
 
 .pricing-card .price-total-annual {
-    font-size: 11px !important;
-    color: var(--text-muted);
+    font-size: 13px !important;
+    color: var(--success);
+    font-weight: 600;
     opacity: 0; /* Hidden by default */
     max-height: 0; /* Collapsed by default */
     overflow: hidden;
-    margin-top: 4px;
-    transition: opacity 0.3s ease, max-height 0.3s ease; /* Animate max-height */
-    width: 100%;
+    margin-top: 8px;
+    padding: 6px 16px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.12) 100%);
+    border-radius: 20px;
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    transition: opacity 0.4s ease, max-height 0.4s ease, transform 0.4s ease;
+    width: auto;
     text-align: center;
+    display: inline-block;
+    transform: translateY(-10px);
 }
 
-/* When the yearly view is active, reveal the element */
+/* When the yearly view is active, reveal the element with beautiful animation */
 .yearly-view-active .pricing-card .price-total-annual {
-    opacity: 0.7;
-    max-height: 20px; /* Animate to a specific height */
+    opacity: 1;
+    max-height: 40px; /* Increased for padding */
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.15);
+}
+
+/* Icon styling inside total annual */
+.pricing-card .price-total-annual i {
+    font-size: 12px;
+    margin-right: 6px;
+    color: var(--success);
 }
 
 /* FEATURES with equal height across cards - THE FINAL FIX */
