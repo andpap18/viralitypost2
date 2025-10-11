@@ -2029,17 +2029,14 @@ body.menu-open {
     color: var(--text-secondary);
     font-size: 1rem;
     margin: 0;
-    min-height: 60px; /* Force consistent height to accommodate 3-line descriptions */
     line-height: 1.4;
     text-align: center;
     flex-shrink: 0; /* Prevent subtitle from shrinking */
     
-    /* Limit to maximum 2 lines */
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
+    /* Force 2-line maximum - SIMPLE AND AGGRESSIVE */
+    max-height: 2.8em; /* 2 lines × 1.4 line-height = 2.8em */
     overflow: hidden;
-    text-overflow: ellipsis;
+    display: block;
 }
 
 .plan-total-year {
@@ -2515,14 +2512,11 @@ body.modal-open {
     
     .pricing-card .plan-sub,
     .pricing-card .subtitle {
-        min-height: 60px; /* Accommodate 3-line text on mobile */
         font-size: 0.95rem;
-        /* Maintain 2-line limit on mobile */
-        display: -webkit-box;
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
+        /* Force 2-line maximum on mobile - SIMPLE */
+        max-height: 2.66em; /* 2 lines × 1.4 line-height × 0.95rem */
         overflow: hidden;
-        text-overflow: ellipsis;
+        display: block;
     }
     
     .pricing-card .pricing-card__cta .plan-cta {
