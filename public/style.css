@@ -2564,8 +2564,10 @@ body.modal-open {
 }
 
 .price-row {
-    display: inline-flex;
-    align-items: baseline; /* baseline alignment for $ amount & /month */
+    display: flex;
+    justify-content: center; /* Horizontally center */
+    align-items: center;     /* Vertically center - THE KEY FIX */
+    min-height: 65px;        /* Force a consistent height for the container - THE KEY FIX */
     gap: 10px;
     line-height: 1;
 }
@@ -2597,12 +2599,17 @@ body.modal-open {
 .price-total-annual {
     font-size: 11px;
     color: var(--text-muted);
-    opacity: 0.7;
-    margin-top: 4px;
-    visibility: hidden;
-    height: 0;
+    opacity: 0; /* Hidden by default */
+    max-height: 0; /* Collapsed by default */
     overflow: hidden;
-    transition: opacity 0.3s ease, visibility 0.3s ease, height 0.3s ease;
+    margin-top: 4px;
+    transition: opacity 0.3s ease, max-height 0.3s ease; /* Animate max-height */
+}
+
+/* When the yearly view is active, reveal the element */
+.yearly-view-active .price-total-annual {
+    opacity: 0.7;
+    max-height: 20px; /* Animate to a specific height */
 }
 
 /* FEATURES with equal height across cards */

@@ -255,24 +255,29 @@
             window.addEventListener('load', setEqualFeaturesHeight);
             window.addEventListener('resize', () => { setEqualFeaturesHeight(); });
 
-            // Update price notes and total annual visibility
+            // Update price notes and total annual visibility using class-based toggle
+            const pricingSection = document.querySelector('.pricing-section');
+            
             const updatePriceNotes = (isYearly) => {
+                // Toggle class on pricing section for CSS-based visibility
+                if (pricingSection) {
+                    if (isYearly) {
+                        pricingSection.classList.add('yearly-view-active');
+                    } else {
+                        pricingSection.classList.remove('yearly-view-active');
+                    }
+                }
+                
+                // Still handle price notes visibility for compatibility
                 cards.forEach(card => {
                     const note = card.querySelector('.price-note');
-                    const totalAnnual = card.querySelector('.price-total-annual');
-                    
                     if (note) {
                         note.style.visibility = isYearly ? 'visible' : 'hidden';
                         note.style.opacity = isYearly ? '1' : '0';
                         note.style.height = '1em';
                     }
-                    
-                    if (totalAnnual) {
-                        totalAnnual.style.visibility = isYearly ? 'visible' : 'hidden';
-                        totalAnnual.style.opacity = isYearly ? '1' : '0';
-                        totalAnnual.style.height = isYearly ? 'auto' : '0';
-                    }
                 });
+                
                 // Recalculate after note toggle
                 setTimeout(setEqualFeaturesHeight, 100);
             };
