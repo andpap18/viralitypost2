@@ -2594,6 +2594,17 @@ body.modal-open {
     transition: opacity 0.3s ease, visibility 0.3s ease;
 }
 
+.price-total-annual {
+    font-size: 11px;
+    color: var(--text-muted);
+    opacity: 0.7;
+    margin-top: 4px;
+    visibility: hidden;
+    height: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, height 0.3s ease;
+}
+
 /* FEATURES with equal height across cards */
 .features {
     display: grid;

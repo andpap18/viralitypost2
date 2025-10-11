@@ -90,6 +90,7 @@
                             <span class="price-unit">/month</span>
                         </div>
                         <div class="price-note">(billed yearly)</div>
+                        <div class="price-total-annual">(Total: $0.00 / year)</div>
                     </div>
 
                     <ul class="features">
@@ -116,6 +117,7 @@
                             <span class="price-unit">/month</span>
                         </div>
                         <div class="price-note">(billed yearly)</div>
+                        <div class="price-total-annual">(Total: $47.88 / year)</div>
                     </div>
 
                     <ul class="features">
@@ -144,6 +146,7 @@
                             <span class="price-unit">/month</span>
                         </div>
                         <div class="price-note">(billed yearly)</div>
+                        <div class="price-total-annual">(Total: $95.88 / year)</div>
                     </div>
 
                     <ul class="features">
@@ -171,6 +174,7 @@
                             <span class="price-unit">/month</span>
                         </div>
                         <div class="price-note">(billed yearly)</div>
+                        <div class="price-total-annual">(Total: $191.88 / year)</div>
                     </div>
 
                     <ul class="features">
@@ -251,14 +255,23 @@
             window.addEventListener('load', setEqualFeaturesHeight);
             window.addEventListener('resize', () => { setEqualFeaturesHeight(); });
 
-            // Update price notes visibility
+            // Update price notes and total annual visibility
             const updatePriceNotes = (isYearly) => {
                 cards.forEach(card => {
                     const note = card.querySelector('.price-note');
-                    if (!note) return;
-                    note.style.visibility = isYearly ? 'visible' : 'hidden';
-                    note.style.opacity = isYearly ? '1' : '0';
-                    note.style.height = '1em';
+                    const totalAnnual = card.querySelector('.price-total-annual');
+                    
+                    if (note) {
+                        note.style.visibility = isYearly ? 'visible' : 'hidden';
+                        note.style.opacity = isYearly ? '1' : '0';
+                        note.style.height = '1em';
+                    }
+                    
+                    if (totalAnnual) {
+                        totalAnnual.style.visibility = isYearly ? 'visible' : 'hidden';
+                        totalAnnual.style.opacity = isYearly ? '1' : '0';
+                        totalAnnual.style.height = isYearly ? 'auto' : '0';
+                    }
                 });
                 // Recalculate after note toggle
                 setTimeout(setEqualFeaturesHeight, 100);
