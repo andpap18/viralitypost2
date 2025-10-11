@@ -2539,3 +2539,104 @@ body.modal-open {
         max-width: 320px;
     }
 }
+
+/* ---------- ABSOLUTE PRICING SYMMETRY WITH GRID ---------- */
+.pricing-card {
+    display: grid !important;
+    grid-template-rows: auto auto auto 1fr auto; /* title, sub, price, features (flexible), CTA */
+    gap: 16px;
+    padding: 24px;
+}
+
+/* Tabular nums for perfect number alignment */
+.pricing-card, .price-row, .price-amount {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum" 1, "lnum" 1;
+}
+
+/* PRICE BLOCK - Perfect baseline alignment */
+.price-block {
+    display: grid;
+    grid-template-rows: auto auto; /* price-row, price-note */
+    gap: 8px;
+    align-items: start;
+    justify-items: center;
+}
+
+.price-row {
+    display: inline-flex;
+    align-items: baseline; /* baseline alignment for $ amount & /month */
+    gap: 10px;
+    line-height: 1;
+}
+
+.price-row .currency {
+    font-size: clamp(18px, 1.4vw, 20px);
+    opacity: .9;
+    transform: translateY(2px);
+}
+
+.price-row .price-amount {
+    font-size: clamp(44px, 5.5vw, 56px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.price-row .price-unit {
+    font-size: clamp(14px, 1.4vw, 16px);
+    opacity: .85;
+}
+
+.price-note {
+    font-size: 12px;
+    opacity: .85;
+    min-height: 1em; /* keeps space even if hidden */
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+}
+
+/* FEATURES with equal height across cards */
+.features {
+    display: grid;
+    gap: 10px;
+    align-content: start;
+    min-height: var(--features-min-h, auto); /* set by JS */
+}
+
+/* Features list item alignment */
+.features li {
+    display: grid;
+    grid-template-columns: 18px 1fr;
+    align-items: start;
+    column-gap: 10px;
+}
+
+/* CTA centered */
+.pricing-card .pricing-card__cta {
+    display: flex !important;
+    justify-content: center;
+    align-items: center;
+}
+
+.pricing-card .pricing-card__cta .plan-cta {
+    display: inline-flex;
+    justify-content: center;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    .pricing-card { 
+        gap: 14px; 
+        padding: 20px; 
+    }
+
+    .price-row .price-amount { 
+        font-size: clamp(36px, 9vw, 48px); 
+    }
+    
+    .price-row .price-unit { 
+        font-size: 14px; 
+    }
+}
