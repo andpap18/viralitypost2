@@ -1839,12 +1839,18 @@ body.menu-open {
 .billing-option {
     font-weight: 500;
     color: var(--text-secondary);
-    transition: var(--transition-fast);
+    transition: all 0.3s ease;
     cursor: pointer;
+    padding: 8px 16px;
+    border-radius: 8px;
+    background: transparent;
 }
 
 .billing-option.active {
-    color: var(--primary);
+    color: white;
+    background: linear-gradient(135deg, var(--primary) 0%, #7c3aed 100%);
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(139, 92, 246, 0.3);
 }
 
 .toggle-switch {
@@ -1923,6 +1929,8 @@ body.menu-open {
     height: 100%;
     /* Ensure consistent alignment for all cards */
     align-items: center;
+    /* Uniform height for consistent visual balance */
+    min-height: 520px;
 }
 
 .pricing-card:hover {
@@ -1943,6 +1951,19 @@ body.menu-open {
 .pricing-card.featured:hover {
     transform: scale(1.03) translateY(-4px);
     box-shadow: 0 0 30px rgba(120, 90, 255, 0.5);
+}
+
+/* Enhanced CTA for Most Popular card */
+.pricing-card.featured .plan-cta {
+    background: linear-gradient(135deg, #9b6bff 0%, #7c3aed 100%);
+    box-shadow: 0 4px 16px rgba(120, 90, 255, 0.4);
+    font-weight: 600;
+}
+
+.pricing-card.featured .plan-cta:hover {
+    background: linear-gradient(135deg, #a67dff 0%, #8b4ced 100%);
+    box-shadow: 0 6px 20px rgba(120, 90, 255, 0.5);
+    transform: translateY(-2px);
 }
 
 .plan-badge {
@@ -1994,6 +2015,26 @@ body.menu-open {
     width: 100%;
 }
 
+.plan-total-year {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-weight: 500;
+    text-align: center;
+    margin-top: 0.5rem;
+    margin-bottom: 0;
+    opacity: 0;
+    max-height: 0;
+    overflow: hidden;
+    transition: opacity 0.3s ease, max-height 0.3s ease, margin 0.3s ease;
+    width: 100%;
+}
+
+.plan-total-year.is-visible {
+    opacity: 1;
+    max-height: 30px;
+    margin-bottom: 0.5rem;
+}
+
 .plan-credits {
     font-size: 0.85rem;
     color: var(--text-muted);
@@ -2017,6 +2058,7 @@ body.menu-open {
     font-weight: 700;
     color: var(--primary);
     line-height: 1;
+    transition: opacity 0.15s ease;
 }
 
 .price-period {
@@ -2217,6 +2259,8 @@ body.modal-open {
         /* Symmetric padding to prevent left/right offset */
         padding-inline: 16px;
         box-sizing: border-box;
+        /* Remove min-height on mobile for natural stacking */
+        min-height: auto;
     }
     
     .pricing-card.featured {

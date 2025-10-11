@@ -89,6 +89,7 @@
                         <span class="price-amount">0</span>
                         <span class="price-period">/month</span>
                     </div>
+                    <div class="plan-total-year">Total: $0.00/year</div>
                     <div class="plan-credits">20 credits / month</div>
                     <div class="plan-features">
                         <ul>
@@ -115,6 +116,7 @@
                         <span class="price-amount" data-monthly="4.99" data-yearly="3.99">4.99</span>
                         <span class="price-period">/month</span>
                     </div>
+                    <div class="plan-total-year">Total: $47.88/year</div>
                     <div class="plan-credits">200 credits / month</div>
                     <div class="plan-features">
                         <ul>
@@ -142,6 +144,7 @@
                         <span class="price-amount" data-monthly="9.99" data-yearly="7.99">9.99</span>
                         <span class="price-period">/month</span>
                     </div>
+                    <div class="plan-total-year">Total: $95.88/year</div>
                     <div class="plan-credits">1,000 credits / month</div>
                     <div class="plan-features">
                         <ul>
@@ -169,6 +172,7 @@
                         <span class="price-amount" data-monthly="19.99" data-yearly="15.99">19.99</span>
                         <span class="price-period">/month</span>
                     </div>
+                    <div class="plan-total-year">Total: $191.88/year</div>
                     <div class="plan-credits">5,000 credits / month</div>
                     <div class="plan-features">
                         <ul>
@@ -233,25 +237,50 @@
             const yearlyOption = document.querySelector('[data-billing="yearly"]');
             const priceAmounts = document.querySelectorAll('.price-amount');
             const pricePeriods = document.querySelectorAll('.price-period');
+            const yearlyTotals = document.querySelectorAll('.plan-total-year');
             
             if (toggle) {
                 toggle.addEventListener('change', function() {
                     const isYearly = this.checked;
                     
-                    // Update toggle UI
+                    // Update toggle UI with aria
                     monthlyOption.classList.toggle('active', !isYearly);
                     yearlyOption.classList.toggle('active', isYearly);
+                    monthlyOption.setAttribute('aria-selected', !isYearly);
+                    yearlyOption.setAttribute('aria-selected', isYearly);
                     
-                    // Update prices
-                    priceAmounts.forEach(amount => {
+                    // Update prices with fade effect
+                    priceAmounts.forEach((amount, index) => {
                         const monthlyPrice = amount.getAttribute('data-monthly');
                         const yearlyPrice = amount.getAttribute('data-yearly');
                         
                         if (monthlyPrice && yearlyPrice) {
+                            // Fade out
+                            amount.style.opacity = '0';
+                            
+                            setTimeout(() => {
+                                // Update price
+                                if (isYearly) {
+                                    amount.textContent = yearlyPrice;
+                                } else {
+                                    amount.textContent = monthlyPrice;
+                                }
+                                
+                                // Fade in
+                                amount.style.opacity = '1';
+                            }, 150);
+                        }
+                        
+                        // Update yearly total
+                        const yearlyTotal = amount.closest('.pricing-card').querySelector('.plan-total-year');
+                        if (yearlyTotal && monthlyPrice && yearlyPrice) {
                             if (isYearly) {
-                                amount.textContent = yearlyPrice;
+                                const currentPrice = parseFloat(yearlyPrice);
+                                const totalYearly = (currentPrice * 12).toFixed(2);
+                                yearlyTotal.textContent = `Total: $${totalYearly}/year`;
+                                yearlyTotal.classList.add('is-visible');
                             } else {
-                                amount.textContent = monthlyPrice;
+                                yearlyTotal.classList.remove('is-visible');
                             }
                         }
                     });
@@ -259,8 +288,7 @@
                     // Update period text
                     pricePeriods.forEach(period => {
                         if (isYearly) {
-                            period.textContent = '/month';
-                            period.innerHTML = '/month<br><small style="color: var(--success); font-weight: 500;">(billed yearly)</small>';
+                            period.innerHTML = '/month<br><small style="color: var(--text-secondary); font-weight: 400; font-size: 0.75rem; opacity: 0.8;">(billed yearly)</small>';
                         } else {
                             period.textContent = '/month';
                             period.innerHTML = '/month';
