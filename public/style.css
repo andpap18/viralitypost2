@@ -1905,6 +1905,8 @@ body.menu-open {
     gap: 2rem;
     max-width: 1400px;
     margin: 0 auto;
+    /* Ensure all cards stretch to equal height */
+    align-items: stretch;
 }
 
 /* Pricing Cards */
@@ -1919,6 +1921,8 @@ body.menu-open {
     display: flex;
     flex-direction: column;
     height: 100%;
+    /* Ensure consistent alignment for all cards */
+    align-items: center;
 }
 
 .pricing-card:hover {
@@ -1931,7 +1935,9 @@ body.menu-open {
     border: 2px solid #9b6bff;
     transform: scale(1.03);
     box-shadow: 0 0 25px rgba(120, 90, 255, 0.4);
-    z-index: 2;
+    /* Z-index layering: featured card above regular cards */
+    z-index: 10;
+    position: relative;
 }
 
 .pricing-card.featured:hover {
@@ -1940,10 +1946,14 @@ body.menu-open {
 }
 
 .plan-badge {
+    /* Perfect centering above the featured card */
     position: absolute;
     top: -12px;
     left: 50%;
     transform: translateX(-50%);
+    /* Z-index layering: badge above featured card */
+    z-index: 20;
+    /* Styling */
     background: linear-gradient(135deg, #9b6bff 0%, #7c3aed 100%);
     color: white;
     padding: 8px 24px;
@@ -1953,10 +1963,14 @@ body.menu-open {
     box-shadow: 0 4px 12px rgba(120, 90, 255, 0.3);
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    white-space: nowrap;
+    /* Prevent blocking clicks */
+    pointer-events: none;
 }
 
 .plan-header {
     margin-bottom: var(--space-lg);
+    width: 100%;
 }
 
 .plan-name {
@@ -1977,6 +1991,7 @@ body.menu-open {
     align-items: baseline;
     justify-content: center;
     gap: 0.25rem;
+    width: 100%;
 }
 
 .plan-credits {
@@ -1987,6 +2002,7 @@ body.menu-open {
     margin-top: 0.5rem;
     text-align: center;
     opacity: 0.8;
+    width: 100%;
 }
 
 .price-currency {
@@ -2012,6 +2028,7 @@ body.menu-open {
 .plan-features {
     flex-grow: 1;
     margin-bottom: var(--space-xl);
+    width: 100%;
 }
 
 .plan-features ul {
@@ -2178,18 +2195,35 @@ body.modal-open {
     }
     
     .pricing-grid {
+        /* Mobile: single column, centered cards with consistent spacing */
         grid-template-columns: 1fr;
-        gap: var(--space-lg);
+        gap: 24px;
+        max-width: 400px;
+        margin: 0 auto;
+        /* Center cards horizontally */
+        justify-items: center;
+    }
+    
+    .pricing-card {
+        /* Ensure cards are fully centered on mobile */
+        width: 100%;
         max-width: 400px;
     }
     
     .pricing-card.featured {
+        /* Subtle scale on mobile, maintain border and badge centering */
         transform: scale(1.01);
         border: 2px solid #9b6bff;
     }
     
     .pricing-card.featured:hover {
         transform: scale(1.01) translateY(-4px);
+    }
+    
+    .plan-badge {
+        /* Ensure badge stays centered on mobile */
+        left: 50%;
+        transform: translateX(-50%);
     }
     
     .modal-content {
@@ -2207,5 +2241,24 @@ body.modal-open {
     
     .toast.show {
         transform: translateY(0);
+    }
+}
+
+/* Desktop: Perfect badge centering and card alignment */
+@media (min-width: 1024px) {
+    .pricing-grid {
+        /* Desktop: 4-column grid with consistent alignment */
+        grid-template-columns: repeat(4, 1fr);
+        gap: 2rem;
+        align-items: stretch;
+    }
+    
+    .plan-badge {
+        /* Desktop: Ensure badge is perfectly centered above featured card */
+        position: absolute;
+        top: -12px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 20;
     }
 }
