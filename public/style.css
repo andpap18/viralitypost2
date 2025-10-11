@@ -2214,6 +2214,9 @@ body.modal-open {
         /* Ensure cards are fully centered on mobile */
         width: 100%;
         max-width: 400px;
+        /* Symmetric padding to prevent left/right offset */
+        padding-inline: 16px;
+        box-sizing: border-box;
     }
     
     .pricing-card.featured {
@@ -2234,26 +2237,41 @@ body.modal-open {
     
     /* Mobile: Perfect CTA centering for all pricing cards */
     .pricing-card__cta {
-        /* Flexbox centering wrapper */
+        /* Flexbox centering wrapper - centers button horizontally */
         display: flex;
         justify-content: center;
         align-items: center;
         width: 100%;
         text-align: center;
         /* Remove any inherited padding that could offset centering */
-        padding-inline: 0;
+        padding-inline: 0 !important;
+        /* Maintain vertical spacing from features */
+        margin-top: 20px;
         /* Override any parent alignment that pulls button left */
         align-self: center;
     }
     
-    .plan-cta {
-        /* Ensure button centers properly in iOS/Safari */
+    .pricing-card__cta .plan-cta,
+    .pricing-card__cta .btn,
+    .pricing-card__cta .btn-primary {
+        /* Button styling for perfect centering on iOS/Safari */
         display: inline-flex;
-        margin-inline: auto;
-        align-self: center;
-        /* Maintain full width on mobile for easy tapping */
+        justify-content: center;
+        align-items: center;
+        /* Fixed max-width for consistent visual appearance */
         width: 100%;
-        max-width: 100%;
+        max-width: 320px;
+        /* Auto margins for centering within wrapper */
+        margin: 0 auto !important;
+        /* Clear any transforms/positioning that could offset button */
+        transform: none !important;
+        left: auto !important;
+        right: auto !important;
+    }
+    
+    /* Ensure card body doesn't pull CTA left */
+    .pricing-card .card-body {
+        align-items: stretch;
     }
     
     .modal-content {
