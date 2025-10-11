@@ -2053,9 +2053,15 @@ body.menu-open {
     flex-shrink: 0;
 }
 
-.plan-cta {
+/* CTA wrapper for proper centering */
+.pricing-card__cta {
     width: 100%;
     margin-top: auto;
+    /* Ensure wrapper doesn't interfere with button positioning */
+}
+
+.plan-cta {
+    width: 100%;
 }
 
 /* Modal Styles */
@@ -2224,6 +2230,30 @@ body.modal-open {
         /* Ensure badge stays centered on mobile */
         left: 50%;
         transform: translateX(-50%);
+    }
+    
+    /* Mobile: Perfect CTA centering for all pricing cards */
+    .pricing-card__cta {
+        /* Flexbox centering wrapper */
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        text-align: center;
+        /* Remove any inherited padding that could offset centering */
+        padding-inline: 0;
+        /* Override any parent alignment that pulls button left */
+        align-self: center;
+    }
+    
+    .plan-cta {
+        /* Ensure button centers properly in iOS/Safari */
+        display: inline-flex;
+        margin-inline: auto;
+        align-self: center;
+        /* Maintain full width on mobile for easy tapping */
+        width: 100%;
+        max-width: 100%;
     }
     
     .modal-content {
