@@ -305,36 +305,28 @@
             const billedNotes = document.querySelectorAll('.billed-note');
             const priceTotals = document.querySelectorAll('.price-total');
             
-            if (toggle) {
-                toggle.addEventListener('change', function() {
-                    const isYearly = this.checked;
+            console.log('Toggle element found:', toggle);
+            console.log('Monthly option found:', monthlyOption);
+            console.log('Yearly option found:', yearlyOption);
+            console.log('Price amounts found:', priceAmounts.length);
+            
+            // Function to update prices based on toggle state
+            function updatePrices(isYearly) {
+                console.log('Updating prices for yearly:', isYearly);
+                
+                priceAmounts.forEach((amount) => {
+                    const monthlyPrice = amount.getAttribute('data-monthly');
+                    const yearlyPrice = amount.getAttribute('data-yearly');
+                    console.log('Price element:', amount, 'Monthly:', monthlyPrice, 'Yearly:', yearlyPrice);
                     
-                    // Update toggle UI with aria
-                    monthlyOption.classList.toggle('active', !isYearly);
-                    yearlyOption.classList.toggle('active', isYearly);
-                    monthlyOption.setAttribute('aria-selected', !isYearly);
-                    yearlyOption.setAttribute('aria-selected', isYearly);
-                    
-                    // Update prices with fade effect
-                    priceAmounts.forEach((amount) => {
-                        const monthlyPrice = amount.getAttribute('data-monthly');
-                        const yearlyPrice = amount.getAttribute('data-yearly');
-                        
-                        if (monthlyPrice && yearlyPrice) {
-                            // Fade out
-                            amount.style.opacity = '0';
-                            
-                            setTimeout(() => {
-                                // Update price
-                                if (isYearly) {
-                                    amount.textContent = yearlyPrice;
-                                } else {
-                                    amount.textContent = monthlyPrice;
-                                }
-                                
-                                // Fade in
-                                amount.style.opacity = '1';
-                            }, 150);
+                    if (monthlyPrice && yearlyPrice) {
+                        // Update price
+                        if (isYearly) {
+                            console.log('Setting yearly price:', yearlyPrice);
+                            amount.textContent = yearlyPrice;
+                        } else {
+                            console.log('Setting monthly price:', monthlyPrice);
+                            amount.textContent = monthlyPrice;
                         }
                         
                         // Update yearly total annual display
@@ -346,16 +338,50 @@
                                 totalAnnual.innerHTML = `<i class="fas fa-check-circle"></i> Total: $${totalYearly} / year`;
                             }
                         }
-                    });
+                    } else {
+                        console.log('Missing data attributes for:', amount);
+                    }
+                });
+                
+                // Toggle billed note visibility
+                billedNotes.forEach(note => {
+                    if (isYearly) {
+                        note.style.display = 'block';
+                    } else {
+                        note.style.display = 'none';
+                    }
+                });
+                
+                // Toggle yearly total visibility
+                const pricingSection = document.querySelector('.pricing-section');
+                if (pricingSection) {
+                    if (isYearly) {
+                        pricingSection.classList.add('yearly-view-active');
+                    } else {
+                        pricingSection.classList.remove('yearly-view-active');
+                    }
+                }
+            }
+            
+            if (toggle) {
+                // Initialize toggle state
+                console.log('Initial toggle state:', toggle.checked);
+                
+                // Initialize prices based on current toggle state
+                updatePrices(toggle.checked);
+                
+                toggle.addEventListener('change', function() {
+                    const isYearly = this.checked;
+                    console.log('Toggle changed to yearly:', isYearly);
                     
-                    // Toggle billed note visibility
-                    billedNotes.forEach(note => {
-                        if (isYearly) {
-                            note.style.display = 'block';
-                        } else {
-                            note.style.display = 'none';
-                        }
-                    });
+                    // Update toggle UI with aria
+                    monthlyOption.classList.toggle('active', !isYearly);
+                    yearlyOption.classList.toggle('active', isYearly);
+                    monthlyOption.setAttribute('aria-selected', !isYearly);
+                    yearlyOption.setAttribute('aria-selected', isYearly);
+                    
+                    // Update prices
+                    updatePrices(isYearly);
                 });
             }
 
